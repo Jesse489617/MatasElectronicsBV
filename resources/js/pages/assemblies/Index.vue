@@ -1,0 +1,66 @@
+<template>
+  <Header />
+
+  <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <h1 class="text-2xl font-bold mb-4">Available Assemblies</h1>
+
+    <div v-if="user?.is_admin" class="my-4">
+      <Link href="/assemblies/create" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+        + Add Assembly
+      </Link>
+    </div>
+
+    <div v-if="isAuthenticated" class="mb-4">
+      <input v-model="searchQuery" type="text" placeholder="Search assemblies..." class="p-2 border rounded w-full"/>
+    </div>
+
+    <ul class="space-y-4">
+      <li v-for="assembly in filteredAssemblies" :key="assembly.id" class="p-4 bg-white rounded shadow hover:shadow-lg" >
+        <Link :href="`/assemblies/${assembly.id}`" class="text-indigo-600 font-semibold">
+          {{ assembly.name }}
+        </Link>
+      </li>
+    </ul>
+
+    <p v-if="filteredAssemblies.length === 0" class="text-gray-500 mt-4">
+      No assemblies found.
+    </p>
+  </div>
+</template>
+
+<script setup lang="ts">
+  import { ref, computed, onMounted } from 'vue'
+  import { Link } from '@inertiajs/vue3'
+  import axios from '@/lib/axios';
+  import Header from '@/components/Header.vue'
+  import { user, isAuthenticated } from '@/stores/auth'
+
+  interface Assembly {
+    id: number
+    name: string
+  }
+
+  const allAssemblies = ref<Assembly[]>([])
+  const searchQuery = ref('')
+
+  const fetchAssemblies = async () => {
+    try {
+      const response = await axios.get('/api/assemblies')
+      allAssemblies.value = response.data.assemblies ?? response.data
+    } catch (error) {
+      console.error('Failed to fetch assemblies:', error)
+    }
+  }
+
+  onMounted(fetchAssemblies)
+
+  const filteredAssemblies = computed(() => {
+    if (!isAuthenticated.value || !searchQuery.value) {
+      return allAssemblies.value
+    }
+    
+    return allAssemblies.value.filter((assembly) =>
+      assembly.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    )
+  })
+</script>
