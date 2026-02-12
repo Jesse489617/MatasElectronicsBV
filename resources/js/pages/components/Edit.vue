@@ -4,8 +4,7 @@
     <div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
         <h1 class="mb-6 text-2xl font-bold">Edit Component</h1>
 
-        <form @submit.prevent="submit" enctype="multipart/form-data">
-
+        <form @submit.prevent="handleUpdateComponent" enctype="multipart/form-data">
             <div class="mb-4">
                 <label class="mb-1 block font-semibold">Component Name</label>
                 <input v-model="name" type="text" class="w-full rounded border p-2" maxlength="50" required />
@@ -48,17 +47,19 @@
 
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
-import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import { defineProps } from 'vue';
 import Nav from '@/components/Nav.vue';
+import { getComponentById } from '@/lib/components/getComponentById';
+import { updateComponent } from '@/lib/components/updateComponents';
+import { getManufacturers } from '@/lib/manufacturers/getManufacturers';
 
 const props = defineProps<{ id: string }>();
 
 const name = ref('');
 const manufacturerId = ref<number | null>(null);
 const type = ref('');
-const image = ref('');
+const image = ref(''); // existing image path
 const price = ref<number>(0);
 
 const imageFile = ref<File | null>(null);
@@ -68,13 +69,9 @@ const manufacturers = ref<{ id: number; name: string }[]>([]);
 
 onMounted(async () => {
     try {
-        const manuRes = await axios.get('/api/manufacturers', {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-        });
-        manufacturers.value = manuRes.data.manufacturers;
+        manufacturers.value = await getManufacturers();
 
-        const compRes = await axios.get(`/api/components/${props.id}`);
-        const component = compRes.data.component ?? compRes.data;
+        const component = await getComponentById(Number(props.id));
 
         name.value = component.name;
         manufacturerId.value = component.manufacturer_id;
@@ -82,42 +79,36 @@ onMounted(async () => {
         image.value = component.image ?? '';
         price.value = component.price;
     } catch (err) {
-        console.error('Failed to load component', err);
+        console.error('Failed to load component or manufacturers', err);
     }
 });
 
 const handleFileUpload = (event: Event) => {
     const target = event.target as HTMLInputElement;
-
     if (!target.files || !target.files.length) return;
 
     imageFile.value = target.files[0];
     imagePreview.value = URL.createObjectURL(imageFile.value);
 };
 
-const submit = async () => {
+const handleUpdateComponent = async () => {
+    if (!name.value) return alert('Component name is required');
+    if (!manufacturerId.value) return alert('Select a manufacturer');
+    if (!type.value) return alert('Component type is required');
+
     try {
-        const formData = new FormData();
-
-        formData.append('name', name.value);
-        formData.append('manufacturer_id', String(manufacturerId.value));
-        formData.append('type', type.value);
-        formData.append('price', String(price.value));
-
-        if (imageFile.value) {
-            formData.append('image', imageFile.value);
-        }
-
-        await axios.post(`/api/components/${props.id}?_method=PUT`, formData, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'multipart/form-data',
-            },
+        await updateComponent({
+            id: Number(props.id),
+            name: name.value,
+            manufacturer_id: manufacturerId.value,
+            type: type.value,
+            price: price.value,
+            image: imageFile.value ?? undefined,
         });
 
         router.visit(`/components/${props.id}`);
-    } catch (err: any) {
-        console.error(err.response?.data);
+    } catch (err) {
+        console.error(err);
         alert('Failed to update component');
     }
 };

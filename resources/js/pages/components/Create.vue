@@ -4,7 +4,7 @@
     <div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
         <h1 class="mb-6 text-2xl font-bold">Create New Component</h1>
 
-        <form @submit.prevent="submit" enctype="multipart/form-data">
+        <form @submit.prevent="handleCreateComponent" enctype="multipart/form-data">
             <div class="mb-4">
                 <label class="mb-1 block font-semibold">Component Name</label>
                 <input v-model="name" type="text" class="w-full rounded border p-2" maxlength="50" required />
@@ -47,9 +47,10 @@
 
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
-import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import Nav from '@/components/Nav.vue';
+import { createComponent } from '@/lib/components/createComponent';
+import { getManufacturers } from '@/lib/manufacturers/getManufacturers';
 
 const name = ref('');
 const manufacturerId = ref<number | null>(null);
@@ -63,13 +64,7 @@ const manufacturers = ref<{ id: number; name: string }[]>([]);
 
 onMounted(async () => {
     try {
-        const res = await axios.get('/api/manufacturers', {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-        });
-
-        manufacturers.value = res.data.manufacturers;
+        manufacturers.value = await getManufacturers();
     } catch (err) {
         console.error('Failed to load manufacturers', err);
     }
@@ -84,24 +79,18 @@ const handleFileUpload = (event: Event) => {
     imagePreview.value = URL.createObjectURL(imageFile.value);
 };
 
-const submit = async () => {
+const handleCreateComponent = async () => {
+    if (!name.value) return alert('Component name is required');
+    if (!manufacturerId.value) return alert('Select a manufacturer');
+    if (!type.value) return alert('Component type is required');
+
     try {
-        const formData = new FormData();
-
-        formData.append('name', name.value);
-        formData.append('manufacturer_id', String(manufacturerId.value));
-        formData.append('type', type.value);
-        formData.append('price', String(price.value));
-
-        if (imageFile.value) {
-            formData.append('image', imageFile.value);
-        }
-
-        await axios.post('/api/components/create', formData, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'multipart/form-data',
-            },
+        await createComponent({
+            name: name.value,
+            manufacturer_id: manufacturerId.value,
+            type: type.value,
+            price: price.value,
+            image: imageFile.value ?? undefined,
         });
 
         router.visit('/components');

@@ -3,7 +3,7 @@
     <div class="mx-auto max-w-3xl py-10">
         <h1 class="mb-6 text-2xl font-bold">Edit Assembly</h1>
 
-        <form @submit.prevent="submit" enctype="multipart/form-data">
+        <form @submit.prevent="handleUpdateAssembly" enctype="multipart/form-data">
             <div class="mb-4">
                 <label class="mb-1 block">Assembly Name</label>
                 <input v-model="name" type="text" class="w-full rounded border p-2" required />
@@ -45,34 +45,34 @@
 
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
-import axios from 'axios';
-import { ref, onMounted, computed } from 'vue';
-import { defineProps } from 'vue';
+import { ref, onMounted, computed, defineProps } from 'vue';
 import Nav from '@/components/Nav.vue';
+import { getAssemblyById } from '@/lib/assemblies/getAssemblyById';
+import { updateAssembly } from '@/lib/assemblies/updateAssembly';
+import { getComponents } from '@/lib/components/getComponents';
+import type { Component, AssemblyComponents } from '@/types/interfaces';
 
 const props = defineProps<{ id: string }>();
 
 const name = ref('');
-const image = ref(''); // path to existing image
+const image = ref('');
 const imageFile = ref<File | null>(null);
 const imagePreview = ref<string | null>(null);
 
 const price = ref<number | null>(null);
-const components = ref<any[]>([]);
+const components = ref<Component[]>([]);
 const selectedComponents = ref<number[]>([]);
 
 onMounted(async () => {
     try {
-        const res = await axios.get('/api/components');
-        components.value = res.data.components ?? res.data;
+        components.value = await getComponents();
 
-        const assemblyRes = await axios.get(`/api/assemblies/${props.id}`);
-        const assembly = assemblyRes.data.assembly;
+        const assembly: AssemblyComponents = await getAssemblyById(props.id);
 
         name.value = assembly.name;
         image.value = assembly.image ?? '';
         price.value = assembly.price;
-        selectedComponents.value = assembly.components.map((c: any) => c.id);
+        selectedComponents.value = assembly.components.map((c) => c.id);
     } catch (err) {
         console.error('Failed to load data', err);
     }
@@ -87,13 +87,13 @@ const totalPrice = computed(() => {
 
 const handleFileUpload = (event: Event) => {
     const target = event.target as HTMLInputElement;
-    if (!target.files || !target.files.length) return;
+    if (!target.files?.length) return;
 
     imageFile.value = target.files[0];
     imagePreview.value = URL.createObjectURL(imageFile.value);
 };
 
-const submit = async () => {
+const handleUpdateAssembly = async () => {
     if (!name.value) return alert('Assembly name is required');
     if (!selectedComponents.value.length) return alert('Select at least one component');
 
@@ -106,18 +106,14 @@ const submit = async () => {
         const formData = new FormData();
         formData.append('name', name.value);
         formData.append('price', String(price.value ?? totalPrice.value));
+
         selectedComponents.value.forEach((id) => formData.append('components[]', String(id)));
 
         if (imageFile.value) {
             formData.append('image', imageFile.value);
         }
 
-        await axios.post(`/api/assemblies/${props.id}?_method=PUT`, formData, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'multipart/form-data',
-            },
-        });
+        await updateAssembly(props.id, formData);
 
         router.visit(`/assemblies/${props.id}`);
     } catch (err) {

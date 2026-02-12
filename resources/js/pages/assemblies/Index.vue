@@ -47,22 +47,16 @@
 import { Link } from '@inertiajs/vue3';
 import { ref, computed, onMounted } from 'vue';
 import Nav from '@/components/Nav.vue';
-import axios from '@/lib/axios';
+import { getAssemblies } from '@/lib/assemblies/getAssemblies';
 import { user, isAuthenticated } from '@/stores/auth';
-
-interface Assembly {
-    id: number;
-    name: string;
-    image?: string;
-}
+import type { Assembly } from '@/types/interfaces';
 
 const allAssemblies = ref<Assembly[]>([]);
 const searchQuery = ref('');
 
 const fetchAssemblies = async () => {
     try {
-        const response = await axios.get('/api/assemblies');
-        allAssemblies.value = response.data.assemblies ?? response.data;
+        allAssemblies.value = await getAssemblies();
     } catch (error) {
         console.error('Failed to fetch assemblies:', error);
     }

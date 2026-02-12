@@ -2,7 +2,6 @@
     <Nav />
 
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-
         <h1 class="mb-6 text-2xl font-bold text-gray-900">Available Components</h1>
 
         <div v-if="isAuthenticated" class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -29,7 +28,6 @@
                 :href="`/components/${component.id}`"
                 class="flex items-center justify-between overflow-hidden rounded-lg border bg-gray-50 transition hover:shadow-md"
             >
-
                 <div class="px-4 py-2 text-sm font-medium text-gray-900">
                     {{ component.name }}
                 </div>
@@ -54,23 +52,16 @@
 import { Link } from '@inertiajs/vue3';
 import { ref, computed, onMounted } from 'vue';
 import Nav from '@/components/Nav.vue';
-import axios from '@/lib/axios';
+import { getComponents } from '@/lib/components/getComponents';
 import { user, isAuthenticated } from '@/stores/auth';
-
-interface Component {
-    id: number;
-    image?: string;
-    name: string;
-    type?: string;
-}
+import type { Component } from '@/types/interfaces';
 
 const allComponents = ref<Component[]>([]);
 const searchQuery = ref('');
 
 const fetchComponents = async () => {
     try {
-        const response = await axios.get('/api/components');
-        allComponents.value = response.data.components ?? response.data;
+        allComponents.value = await getComponents();
     } catch (error) {
         console.error('Failed to fetch components:', error);
     }

@@ -45,9 +45,10 @@
 
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
-import axios from 'axios';
 import { ref, onMounted, computed } from 'vue';
 import Nav from '@/components/Nav.vue';
+import { createAssembly } from '@/lib/assemblies/createAssembly';
+import { getComponents } from '@/lib/components/getComponents';
 
 const name = ref('');
 const price = ref<number | null>(null);
@@ -59,8 +60,7 @@ const imagePreview = ref<string | null>(null);
 
 onMounted(async () => {
     try {
-        const res = await axios.get('/api/components');
-        components.value = res.data.components ?? res.data;
+        components.value = await getComponents();
     } catch (err) {
         console.error('Failed to load components', err);
     }
@@ -68,7 +68,7 @@ onMounted(async () => {
 
 const handleFileUpload = (event: Event) => {
     const target = event.target as HTMLInputElement;
-    if (!target.files || !target.files.length) return;
+    if (!target.files?.length) return;
 
     imageFile.value = target.files[0];
     imagePreview.value = URL.createObjectURL(imageFile.value);
@@ -85,30 +85,19 @@ const submit = async () => {
     if (!name.value) return alert('Assembly name is required');
     if (!selectedComponents.value.length) return alert('Select at least one component');
 
+    const finalPrice = price.value ?? totalPrice.value;
+
     if (price.value !== null && price.value < totalPrice.value) {
         const confirmLower = confirm(`The assembly price (€${price.value}) is lower than the total component price (€${totalPrice.value}). Proceed?`);
         if (!confirmLower) return;
     }
 
     try {
-        const formData = new FormData();
-
-        formData.append('name', name.value);
-        formData.append('price', String(price.value ?? totalPrice.value));
-
-        selectedComponents.value.forEach((id) => {
-            formData.append('components[]', String(id));
-        });
-
-        if (imageFile.value) {
-            formData.append('image', imageFile.value);
-        }
-
-        await axios.post('/api/assemblies/create', formData, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'multipart/form-data',
-            },
+        await createAssembly({
+            name: name.value,
+            price: finalPrice,
+            components: selectedComponents.value,
+            image: imageFile.value,
         });
 
         router.visit('/assemblies');

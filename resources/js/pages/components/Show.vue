@@ -5,7 +5,6 @@
         <div v-if="component" class="bg-white">
             <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
-
                     <div class="flex justify-center">
                         <div class="aspect-square w-100 overflow-hidden rounded-xl border bg-gray-50 shadow-sm">
                             <img
@@ -61,7 +60,7 @@
                                     />
 
                                     <button
-                                        @click="buyComponent"
+                                        @click="handleBuyComponent"
                                         :disabled="isBuying"
                                         class="flex-1 rounded-md bg-black px-6 py-3 font-medium text-white transition hover:bg-gray-800 disabled:opacity-50"
                                     >
@@ -83,18 +82,12 @@
 
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineProps } from 'vue';
 import Nav from '@/components/Nav.vue';
-import axios from '@/lib/axios';
+import { buyComponent } from '@/lib/components/buyComponent';
+import { getComponentById } from '@/lib/components/getComponentById';
 import { user, isAuthenticated } from '@/stores/auth';
-
-interface Component {
-    id: number;
-    name: string;
-    price: number;
-    type: string;
-    image?: string;
-}
+import type { Component } from '@/types/interfaces';
 
 const props = defineProps<{ id: string }>();
 const id = Number(props.id);
@@ -105,31 +98,24 @@ const isBuying = ref(false);
 
 onMounted(async () => {
     try {
-        const response = await axios.get(`/api/components/${id}`);
-        component.value = response.data.component;
+        component.value = await getComponentById(id);
     } catch (err) {
         console.error('Error fetching component:', err);
     }
 });
 
-const buyComponent = async () => {
+const handleBuyComponent = async () => {
     if (!component.value || quantity.value < 1) return;
 
     isBuying.value = true;
 
     try {
-        const response = await axios.post(
-            '/api/components/buy',
-            {
-                component_id: component.value.id,
-                quantity: quantity.value,
-            },
-            {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-            },
-        );
+        const data = await buyComponent({
+            component_id: component.value.id,
+            quantity: quantity.value,
+        });
 
-        alert(response.data.message);
+        alert(data.message);
         quantity.value = 1;
     } catch (err: any) {
         console.error(err);

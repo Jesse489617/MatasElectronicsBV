@@ -4,9 +4,7 @@
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div v-if="assembly" class="bg-white">
             <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-
                 <div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
-
                     <div class="flex justify-center">
                         <div class="aspect-square w-100 overflow-hidden rounded-xl border bg-gray-50 shadow-sm">
                             <img v-if="assembly.image" :src="`/storage/${assembly.image}`" alt="Assembly Image" class="h-full w-full object-cover" />
@@ -49,7 +47,7 @@
                                     />
 
                                     <button
-                                        @click="buyAssembly"
+                                        @click="handleBuyAssembly"
                                         :disabled="isBuying"
                                         class="flex-1 rounded-md bg-black px-6 py-3 font-medium text-white transition hover:bg-gray-800 disabled:opacity-50"
                                     >
@@ -98,62 +96,39 @@
 
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { ref, onMounted } from 'vue';
-import { defineProps } from 'vue';
+import { ref, onMounted, defineProps } from 'vue';
 import Nav from '@/components/Nav.vue';
-import axios from '@/lib/axios';
+import { buyAssembly } from '@/lib/assemblies/buyAssembly';
+import { getAssemblyById } from '@/lib/assemblies/getAssemblyById';
 import { user, isAuthenticated } from '@/stores/auth';
-interface Component {
-    id: number;
-    name: string;
-    type: string;
-    price: number;
-    image?: string;
-}
-
-interface Assembly {
-    id: number;
-    name: string;
-    image?: string;
-    price: number;
-    components: Component[];
-}
+import type { AssemblyComponents } from '@/types/interfaces';
 
 const props = defineProps<{ id: string }>();
 
-const assembly = ref<Assembly | null>(null);
+const assembly = ref<AssemblyComponents | null>(null);
 const quantity = ref(1);
 const isBuying = ref(false);
 
 onMounted(async () => {
     try {
-        const response = await axios.get(`/api/assemblies/${props.id}`);
-        assembly.value = response.data.assembly;
+        assembly.value = await getAssemblyById(props.id);
     } catch (err) {
         console.error('Error fetching assembly:', err);
     }
 });
 
-const buyAssembly = async () => {
+const handleBuyAssembly = async () => {
     if (!assembly.value || quantity.value < 1) return;
 
     isBuying.value = true;
 
     try {
-        const response = await axios.post(
-            '/api/assemblies/buy',
-            {
-                assembly_id: assembly.value.id,
-                quantity: quantity.value,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            },
-        );
+        const data = await buyAssembly({
+            assembly_id: assembly.value.id,
+            quantity: quantity.value,
+        });
 
-        alert(response.data.message);
+        alert(data.message);
         quantity.value = 1;
     } catch (error: any) {
         console.error(error);

@@ -1,8 +1,3 @@
-<script setup lang="ts">
-    import { Link } from '@inertiajs/vue3';
-    import Nav from '@/components/Nav.vue';
-</script>
-
 <template>
     <div class="min-h-screen bg-gray-50">
         <Nav />
@@ -27,4 +22,7 @@
     </div>
 </template>
 
-<style scoped></style>
+<script setup lang="ts">
+    import { Link } from '@inertiajs/vue3';
+    import Nav from '@/components/Nav.vue';
+</script>
