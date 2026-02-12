@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreAssemblyRequest;
+use App\Http\Requests\Assemblies\IndexAssemblyRequest;
+use App\Http\Requests\Assemblies\BuyAssemblyRequest;
+use App\Http\Requests\assemblies\StoreAssemblyRequest;
 use App\Models\Assembly;
 use App\Models\AssemblyComponent;
 use DB;
@@ -14,12 +16,12 @@ use Intervention\Image\ImageManager;
 
 class AssemblyController extends Controller
 {
-    public function index(Request $request)
+    public function index(IndexAssemblyRequest $request)
     {
         $query = Assembly::query();
 
         if ($request->filled('search') && $request->user()) {
-            $query->where('name', 'like', "%$request->search%");
+            $query->where('name', 'like', "%{$request->search}%");
         }
 
         return response()->json([
@@ -40,13 +42,8 @@ class AssemblyController extends Controller
         ]);
     }
 
-    public function buy(Request $request)
+    public function buy(BuyAssemblyRequest $request)
     {
-        $request->validate([
-            'assembly_id' => 'required|exists:assemblies,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
-
         $user = $request->user();
         $assemblyId = $request->assembly_id;
         $quantity = $request->quantity;
