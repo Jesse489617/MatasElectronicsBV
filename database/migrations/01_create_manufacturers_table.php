@@ -11,7 +11,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('manufactures', function (Blueprint $table) {
+        Schema::create('manufacturers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
             $table->timestamp('created_at')->useCurrent();
@@ -24,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('manufactures');
+        Schema::dropIfExists('manufacturers');
     }
 };

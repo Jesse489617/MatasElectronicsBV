@@ -3,13 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserAssembly extends Model
 {
-    //use HasFactory;
-
     protected $table = 'user_assemblies';
 
     protected $fillable = [
@@ -17,7 +14,7 @@ class UserAssembly extends Model
         'assembly_id',
     ];
 
-    public function user() : BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -26,5 +23,4 @@ class UserAssembly extends Model
     {
         return $this->belongsTo(Assembly::class);
     }
-
 }

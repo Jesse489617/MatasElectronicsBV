@@ -2,9 +2,11 @@
     <Nav />
 
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <h1 class="mb-4 text-2xl font-bold">Available Components</h1>
+        <!-- Page Title -->
+        <h1 class="mb-6 text-2xl font-bold text-gray-900">Available Components</h1>
 
-        <div v-if="isAuthenticated" class="mb-4 flex items-center gap-4">
+        <!-- Search + Add Button -->
+        <div v-if="isAuthenticated" class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center">
             <input
                 v-model="searchQuery"
                 type="text"
@@ -13,19 +15,43 @@
             />
 
             <Link
-                v-if="user?.is_admin" href="/components/create" class="rounded-md bg-gray-600 px-4 py-2 whitespace-nowrap text-white transition hover:bg-gray-700">
+                v-if="user?.is_admin"
+                href="/components/create"
+                class="rounded-md bg-gray-600 px-4 py-2 whitespace-nowrap text-white transition hover:bg-gray-700"
+            >
                 + Add Component
             </Link>
         </div>
 
-        <ul class="space-y-4">
-            <li v-for="component in filteredComponents" :key="component.id" class="rounded bg-white p-4 shadow hover:shadow-lg">
-                <Link :href="`/components/${component.id}`" class="font-semibold text-gray-600">
+        <!-- Components Grid -->
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Link
+                v-for="component in filteredComponents"
+                :key="component.id"
+                :href="`/components/${component.id}`"
+                class="flex items-center justify-between overflow-hidden rounded-lg border bg-gray-50 transition hover:shadow-md"
+            >
+                <!-- Left: Name + Type Placeholder -->
+                <div class="px-4 py-2 text-sm font-medium text-gray-900">
                     {{ component.name }}
-                </Link>
-            </li>
-        </ul>
+                    <!-- Optional type could go here if available -->
+                    <!-- <span class="text-gray-500">(Type)</span> -->
+                </div>
 
+                <!-- Right: Icon -->
+                <div class="h-12 w-12 shrink-0 overflow-hidden rounded-r-lg">
+                    <img
+                        v-if="component.image"
+                        :src="`/storage/${component.image.replace('components/', 'components/icons/')}`"
+                        alt="Component Icon"
+                        class="h-full w-full object-cover"
+                    />
+                    <div v-else class="flex h-full w-full items-center justify-center bg-gray-100 text-xs text-gray-400">No Icon</div>
+                </div>
+            </Link>
+        </div>
+
+        <!-- Empty State -->
         <p v-if="filteredComponents.length === 0" class="mt-4 text-gray-500">No components found.</p>
     </div>
 </template>
@@ -39,7 +65,9 @@ import { user, isAuthenticated } from '@/stores/auth';
 
 interface Component {
     id: number;
+    image?: string;
     name: string;
+    type?: string; // Optional, could add if available
 }
 
 const allComponents = ref<Component[]>([]);

@@ -3,15 +3,22 @@
     <div class="mx-auto max-w-3xl py-10">
         <h1 class="mb-6 text-2xl font-bold">Edit Assembly</h1>
 
-        <form @submit.prevent="submit">
+        <form @submit.prevent="submit" enctype="multipart/form-data">
             <div class="mb-4">
                 <label class="mb-1 block">Assembly Name</label>
                 <input v-model="name" type="text" class="w-full rounded border p-2" required />
             </div>
 
+            <!-- IMAGE UPLOAD -->
             <div class="mb-4">
-                <label class="mb-1 block font-semibold">Image URL</label>
-                <input v-model="image" type="text" class="w-full rounded border p-2" maxlength="255" />
+                <label class="mb-1 block font-semibold">Upload Image</label>
+                <input type="file" @change="handleFileUpload" class="w-full rounded border p-2" accept="image/*" />
+            </div>
+
+            <!-- Preview -->
+            <div v-if="imagePreview || image" class="mb-4">
+                <p class="mb-2 font-semibold">Preview:</p>
+                <img :src="imagePreview || `/storage/${image}`" class="h-40 rounded border object-cover" alt="Assembly Image Preview" />
             </div>
 
             <div class="mb-4">
@@ -48,7 +55,10 @@ import Nav from '@/components/Nav.vue';
 const props = defineProps<{ id: string }>();
 
 const name = ref('');
-const image = ref('');
+const image = ref(''); // path to existing image
+const imageFile = ref<File | null>(null);
+const imagePreview = ref<string | null>(null);
+
 const price = ref<number | null>(null);
 const components = ref<any[]>([]);
 const selectedComponents = ref<number[]>([]);
@@ -79,6 +89,14 @@ const totalPrice = computed(() => {
     }, 0);
 });
 
+const handleFileUpload = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (!target.files || !target.files.length) return;
+
+    imageFile.value = target.files[0];
+    imagePreview.value = URL.createObjectURL(imageFile.value);
+};
+
 const submit = async () => {
     if (!name.value) return alert('Assembly name is required');
     if (!selectedComponents.value.length) return alert('Select at least one component');
@@ -89,16 +107,21 @@ const submit = async () => {
     }
 
     try {
-        await axios.put(
-            `/api/assemblies/${props.id}`,
-            {
-                name: name.value,
-                image: image.value,
-                price: price.value ?? totalPrice.value,
-                components: selectedComponents.value,
+        const formData = new FormData();
+        formData.append('name', name.value);
+        formData.append('price', String(price.value ?? totalPrice.value));
+        selectedComponents.value.forEach((id) => formData.append('components[]', String(id)));
+
+        if (imageFile.value) {
+            formData.append('image', imageFile.value);
+        }
+
+        await axios.post(`/api/assemblies/${props.id}?_method=PUT`, formData, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'multipart/form-data',
             },
-            { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } },
-        );
+        });
 
         router.visit(`/assemblies/${props.id}`);
     } catch (err) {

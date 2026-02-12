@@ -51,43 +51,43 @@
             </div>
 
             <div v-else class="flex gap-4">
-                <Link href="/login" class="text-indigo-600 hover:underline">Login</Link>
-                <Link href="/register" class="text-indigo-600 hover:underline">Register</Link>
+                <Link href="/login" class="text-white hover:underline">Login</Link>
+                <Link href="/register" class="text-white hover:underline">Register</Link>
             </div>
         </div>
     </header>
 </template>
 
 <script setup lang="ts">
-    import { Link } from '@inertiajs/vue3';
-    import { ref, onMounted, onBeforeUnmount } from 'vue';
-    import { user, logout } from '@/stores/auth';
+import { Link } from '@inertiajs/vue3';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { user, logout } from '@/stores/auth';
 
-    const showMenu = ref(false);
+const showMenu = ref(false);
 
-    function toggleMenu() {
-        showMenu.value = !showMenu.value;
-    }
+function toggleMenu() {
+    showMenu.value = !showMenu.value;
+}
 
-    function handleLogout() {
-        logout();
+function handleLogout() {
+    logout();
+    showMenu.value = false;
+}
+
+// Close dropdown when clicking outside
+function handleClickOutside(event: MouseEvent) {
+    const menu = document.getElementById('user-dropdown');
+    const avatar = document.getElementById('user-avatar');
+    if (menu && avatar && !menu.contains(event.target as Node) && !avatar.contains(event.target as Node)) {
         showMenu.value = false;
     }
+}
 
-    // Close dropdown when clicking outside
-    function handleClickOutside(event: MouseEvent) {
-        const menu = document.getElementById('user-dropdown');
-        const avatar = document.getElementById('user-avatar');
-        if (menu && avatar && !menu.contains(event.target as Node) && !avatar.contains(event.target as Node)) {
-            showMenu.value = false;
-        }
-    }
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside);
+});
 
-    onMounted(() => {
-        document.addEventListener('click', handleClickOutside);
-    });
-
-    onBeforeUnmount(() => {
-        document.removeEventListener('click', handleClickOutside);
-    });
+onBeforeUnmount(() => {
+    document.removeEventListener('click', handleClickOutside);
+});
 </script>

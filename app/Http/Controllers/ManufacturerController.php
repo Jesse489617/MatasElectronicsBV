@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Manufacturer;
-use Illuminate\Http\Request;
 
 class ManufacturerController extends Controller
 {
@@ -11,7 +10,7 @@ class ManufacturerController extends Controller
     {
         $manufacturers = Manufacturer::all(['id', 'name']);
 
-        return response()->json([ 
+        return response()->json([
             'manufacturers' => $manufacturers,
         ]);
     }

@@ -14,7 +14,7 @@ return new class extends Migration {
         Schema::create('components', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->foreignId('manufacturer_id')->constrained('manufactures')->onDelete('cascade');
+            $table->foreignId('manufacturer_id')->constrained('manufacturers')->onDelete('cascade');
             $table->string('type', 50);
             $table->string('image')->nullable();
             $table->float('price');

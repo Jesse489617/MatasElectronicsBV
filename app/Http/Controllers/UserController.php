@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuthUserRequest;
+use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\StoreUserRequest;
-use App\Http\Requests\AuthUserRequest;
 
 class UserController extends Controller
 {
@@ -20,10 +19,9 @@ class UserController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Account has been created successfully.'
+            'message' => 'Account has been created successfully.',
         ]);
     }
-
 
     public function auth(AuthUserRequest $request)
     {
@@ -31,7 +29,7 @@ class UserController extends Controller
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             return response()->json([
-                'message' => 'These credentials do not match our records.'
+                'message' => 'These credentials do not match our records.',
             ], 401);
         }
 
@@ -42,11 +40,12 @@ class UserController extends Controller
         ]);
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'message' => 'Logged out successfully.' 
+            'message' => 'Logged out successfully.',
         ]);
     }
 }

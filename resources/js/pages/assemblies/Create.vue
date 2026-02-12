@@ -18,7 +18,7 @@
             <!-- Preview -->
             <div v-if="imagePreview" class="mb-4">
                 <p class="mb-2 font-semibold">Preview:</p>
-                <img :src="imagePreview" class="h-40 rounded border object-cover" />
+                <img :src="imagePreview" class="h-40 rounded border object-cover" alt="Assembly Image Preview" />
             </div>
 
             <div class="mb-4">
@@ -40,7 +40,7 @@
                 <p class="mt-1 text-sm text-gray-500">Minimum price based on selected components: €{{ totalPrice }}</p>
             </div>
 
-            <button type="submit" class="rounded bg-gray-600 px-4 py-2 text-white hover:bg-green-700">Create Assembly</button>
+            <button type="submit" class="rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-700">Create Assembly</button>
         </form>
     </div>
 </template>
@@ -104,10 +104,6 @@ const submit = async () => {
 
         if (imageFile.value) {
             formData.append('image', imageFile.value);
-        }
-
-        for (const pair of formData.entries()) {
-            console.log(pair[0], pair[1]);
         }
 
         await axios.post('/api/assemblies/create', formData, {

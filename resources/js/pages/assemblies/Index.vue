@@ -2,9 +2,11 @@
     <Nav />
 
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <h1 class="mb-4 text-2xl font-bold">Available Assemblies</h1>
+        <!-- Page Title -->
+        <h1 class="mb-6 text-2xl font-bold text-gray-900">Available Assemblies</h1>
 
-        <div v-if="isAuthenticated" class="mb-4 flex items-center gap-4">
+        <!-- Search + Add Button -->
+        <div v-if="isAuthenticated" class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center">
             <input
                 v-model="searchQuery"
                 type="text"
@@ -12,55 +14,73 @@
                 class="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-gray-500 focus:outline-none"
             />
 
-            <Link v-if="user?.is_admin" href="/assemblies/create" class="rounded-md bg-gray-600 px-4 py-2 whitespace-nowrap text-white transition hover:bg-gray-700">
+            <Link
+                v-if="user?.is_admin"
+                href="/assemblies/create"
+                class="rounded-md bg-gray-600 px-4 py-2 whitespace-nowrap text-white transition hover:bg-gray-700"
+            >
                 + Add Assembly
             </Link>
         </div>
 
-        <ul class="space-y-4">
-            <li v-for="assembly in filteredAssemblies" :key="assembly.id" class="rounded bg-white p-4 shadow hover:shadow-lg">
-                <Link :href="`/assemblies/${assembly.id}`" class="font-semibold text-gray-600">
+        <!-- Assemblies List -->
+        <div class="space-y-4">
+            <Link
+                v-for="assembly in filteredAssemblies"
+                :key="assembly.id"
+                :href="`/assemblies/${assembly.id}`"
+                class="flex items-center justify-between overflow-hidden rounded-lg border bg-gray-50 transition hover:shadow-md"
+            >
+                <!-- Left: Assembly Name -->
+                <div class="px-4 py-2 text-sm font-medium text-gray-900">
                     {{ assembly.name }}
-                </Link>
-            </li>
-        </ul>
+                </div>
 
+                <!-- Right: Assembly Image -->
+                <div class="h-12 w-12 shrink-0 overflow-hidden rounded-r-lg">
+                    <img v-if="assembly.image" :src="`/storage/${assembly.image}`" alt="Assembly Image" class="h-full w-full object-cover" />
+                    <div v-else class="flex h-full w-full items-center justify-center bg-gray-100 text-xs text-gray-400">No Image</div>
+                </div>
+            </Link>
+        </div>
+
+        <!-- Empty State -->
         <p v-if="filteredAssemblies.length === 0" class="mt-4 text-gray-500">No assemblies found.</p>
     </div>
 </template>
 
 <script setup lang="ts">
-    import { Link } from '@inertiajs/vue3';
-    import { ref, computed, onMounted } from 'vue';
-    import Nav from '@/components/Nav.vue';
-    import axios from '@/lib/axios';
+import { Link } from '@inertiajs/vue3';
+import { ref, computed, onMounted } from 'vue';
+import Nav from '@/components/Nav.vue';
+import axios from '@/lib/axios';
+import { user, isAuthenticated } from '@/stores/auth';
 
-    import { user, isAuthenticated } from '@/stores/auth';
+interface Assembly {
+    id: number;
+    name: string;
+    image?: string;
+}
 
-    interface Assembly {
-        id: number;
-        name: string;
+const allAssemblies = ref<Assembly[]>([]);
+const searchQuery = ref('');
+
+const fetchAssemblies = async () => {
+    try {
+        const response = await axios.get('/api/assemblies');
+        allAssemblies.value = response.data.assemblies ?? response.data;
+    } catch (error) {
+        console.error('Failed to fetch assemblies:', error);
+    }
+};
+
+onMounted(fetchAssemblies);
+
+const filteredAssemblies = computed(() => {
+    if (!isAuthenticated.value || !searchQuery.value) {
+        return allAssemblies.value;
     }
 
-    const allAssemblies = ref<Assembly[]>([]);
-    const searchQuery = ref('');
-
-    const fetchAssemblies = async () => {
-        try {
-            const response = await axios.get('/api/assemblies');
-            allAssemblies.value = response.data.assemblies ?? response.data;
-        } catch (error) {
-            console.error('Failed to fetch assemblies:', error);
-        }
-    };
-
-    onMounted(fetchAssemblies);
-
-    const filteredAssemblies = computed(() => {
-        if (!isAuthenticated.value || !searchQuery.value) {
-            return allAssemblies.value;
-        }
-
-        return allAssemblies.value.filter((assembly) => assembly.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
-    });
+    return allAssemblies.value.filter((assembly) => assembly.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+});
 </script>

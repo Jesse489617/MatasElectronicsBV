@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\UserAssembly;
+use Illuminate\Http\Request;
 
 class HistoryController extends Controller
 {
@@ -12,12 +12,12 @@ class HistoryController extends Controller
         $user = $request->user();
 
         $history = UserAssembly::with(['assembly.components'])
-        ->where('user_id', $user->id)
-        ->latest()
-        ->get();
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
 
         return response()->json([
-            'history' => $history
+            'history' => $history,
         ]);
     }
 }
