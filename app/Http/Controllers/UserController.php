@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AuthUserRequest;
-use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\auth\AuthUserRequest;
+use App\Http\Requests\auth\StoreUserRequest;
+use App\Http\Requests\auth\LogoutUserRequest;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -40,7 +42,7 @@ class UserController extends Controller
         ]);
     }
 
-    public function logout(Request $request)
+    public function logout(LogoutUserRequest $request)
     {
         $request->user()->currentAccessToken()->delete();
 
