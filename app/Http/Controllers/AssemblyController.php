@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Assemblies\IndexAssemblyRequest;
 use App\Http\Requests\Assemblies\BuyAssemblyRequest;
 use App\Http\Requests\assemblies\StoreAssemblyRequest;
+use App\Http\Requests\assemblies\UpdateAssemblyRequest;
 use App\Models\Assembly;
 use App\Models\AssemblyComponent;
 use DB;
@@ -121,7 +122,7 @@ class AssemblyController extends Controller
         ], 201);
     }
 
-    public function update(StoreAssemblyRequest $request, $id)
+    public function update(UpdateAssemblyRequest $request, $id)
     {
         $assembly = Assembly::findOrFail($id);
 

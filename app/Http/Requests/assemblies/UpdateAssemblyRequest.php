@@ -4,7 +4,7 @@ namespace App\Http\Requests\assemblies;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreAssemblyRequest extends FormRequest
+class UpdateAssemblyRequest extends FormRequest
 {
     public function authorize(): bool
     {
