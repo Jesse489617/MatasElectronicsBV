@@ -13,13 +13,13 @@ class AdminWebMiddleware
         $token = $request->bearerToken();
 
         if (! $token) {
-            return redirect('/'); // or abort(403)
+            return redirect('/');
         }
 
         $accessToken = PersonalAccessToken::findToken($token);
 
         if (! $accessToken || ! $accessToken->tokenable->is_admin) {
-            return redirect('/'); // or abort(403)
+            return redirect('/');
         }
 
         // Optionally: set user in request for downstream

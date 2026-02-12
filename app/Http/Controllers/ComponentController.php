@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreComponentRequest;
 use App\Models\Component;
+use DB;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -24,6 +26,35 @@ class ComponentController extends Controller
 
         return response()->json([
             'component' => $component,
+        ]);
+    }
+
+    public function buy(Request $request)
+    {
+        $request->validate([
+            'component_id' => 'required|exists:components,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $user = $request->user();
+        $componentId = $request->component_id;
+        $quantity = $request->quantity;
+
+        $rows = [];
+        for ($i = 0; $i < $quantity; $i++) {
+            $rows[] = [
+                'user_id' => $user->id,
+                'assembly_id' => null,
+                'component_id' => $componentId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        DB::table('user_assemblies')->insert($rows);
+
+        return response()->json([
+            'message' => "Successfully purchased $quantity component(s).",
         ]);
     }
 

@@ -1,21 +1,20 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\AssemblyController;
+use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\ManufacturerController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminMiddleware;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 // Auth API
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('user', function(Request $request) {
+    Route::get('user', function (Request $request) {
         return [
             'user' => $request->user(),
-            'currentToken' => $request->bearerToken()
+            'currentToken' => $request->bearerToken(),
         ];
     });
 
@@ -30,6 +29,8 @@ Route::middleware('auth:sanctum', AdminMiddleware::class)->group(function () {
     Route::post('components/create', [ComponentController::class, 'store']);
     Route::put('components/{id}', [ComponentController::class, 'update']);
 });
+
+Route::middleware('auth:sanctum')->post('/components/buy', [ComponentController::class, 'buy']);
 Route::get('/components', [ComponentController::class, 'index']);
 Route::get('/components/{id}', [ComponentController::class, 'show']);
 

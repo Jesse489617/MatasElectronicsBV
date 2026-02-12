@@ -56,6 +56,7 @@ class AssemblyController extends Controller
             $rows[] = [
                 'user_id' => $user->id,
                 'assembly_id' => $assemblyId,
+                'component_id' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

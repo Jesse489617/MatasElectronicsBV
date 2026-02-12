@@ -9,13 +9,11 @@
                 <input v-model="name" type="text" class="w-full rounded border p-2" required />
             </div>
 
-            <!-- IMAGE UPLOAD -->
             <div class="mb-4">
                 <label class="mb-1 block font-semibold">Upload Image</label>
                 <input type="file" @change="handleFileUpload" class="w-full rounded border p-2" accept="image/*" />
             </div>
 
-            <!-- Preview -->
             <div v-if="imagePreview || image" class="mb-4">
                 <p class="mb-2 font-semibold">Preview:</p>
                 <img :src="imagePreview || `/storage/${image}`" class="h-40 rounded border object-cover" alt="Assembly Image Preview" />
@@ -65,11 +63,9 @@ const selectedComponents = ref<number[]>([]);
 
 onMounted(async () => {
     try {
-        // Load all components
         const res = await axios.get('/api/components');
         components.value = res.data.components ?? res.data;
 
-        // Load assembly data
         const assemblyRes = await axios.get(`/api/assemblies/${props.id}`);
         const assembly = assemblyRes.data.assembly;
 

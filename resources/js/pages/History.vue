@@ -18,18 +18,19 @@
             <div class="flex items-start justify-between">
                 <div>
                     <h2 class="text-xl font-semibold">
-                        {{ item.assembly.name }}
+                        {{ item.name }}
+                        <span v-if="item.type === 'component'" class="text-sm text-gray-400">(Component)</span>
                     </h2>
                     <p class="text-sm text-gray-500">Purchased on {{ formatDate(item.created_at) }}</p>
                 </div>
 
-                <div class="text-right font-semibold">€{{ item.assembly.price }}</div>
+                <div class="text-right font-semibold">€{{ item.price }}</div>
             </div>
 
-            <div class="mt-4">
+            <div v-if="item.type === 'assembly' && item.components?.length" class="mt-4">
                 <p class="mb-1 font-semibold">Components</p>
                 <ul class="list-inside list-disc">
-                    <li v-for="component in item.assembly.components" :key="component.id">{{ component.name }}</li>
+                    <li v-for="component in item.components" :key="component.id">{{ component.name }}</li>
                 </ul>
             </div>
         </div>
@@ -64,7 +65,33 @@ onMounted(async () => {
             },
         });
 
-        history.value = response.data.history;
+        history.value = response.data.history.map((row: any) => {
+            if (row.type === 'assembly' && row.assembly) {
+                return {
+                    id: row.id,
+                    type: 'assembly',
+                    name: row.assembly.name ?? 'Unnamed Assembly',
+                    price: row.assembly.price ?? 0,
+                    components: row.assembly.components ?? [],
+                    created_at: row.created_at,
+                };
+            } else if (row.type === 'component' && row.component) {
+                return {
+                    id: row.id,
+                    type: 'component',
+                    name: row.component.name ?? 'Unnamed Component',
+                    price: row.component.price ?? 0,
+                    created_at: row.created_at,
+                };
+            }
+            return {
+                id: row.id,
+                type: 'unknown',
+                name: 'Unknown Purchase',
+                price: 0,
+                created_at: row.created_at,
+            };
+        });
     } catch (error) {
         console.error('Failed to load history:', error);
     }
@@ -73,18 +100,19 @@ onMounted(async () => {
 const filteredHistory = computed(() => {
     let result = [...history.value];
 
-    // Search (assembly + components)
     if (search.value) {
         const q = search.value.toLowerCase();
-        result = result.filter(
-            (item) => item.assembly.name.toLowerCase().includes(q) || item.assembly.components.some((c: any) => c.name.toLowerCase().includes(q)),
-        );
+        result = result.filter((item) => {
+            const nameMatch = item.name.toLowerCase().includes(q);
+            const compMatch = item.type === 'assembly' && item.components?.some((c: any) => c.name.toLowerCase().includes(q));
+            return nameMatch || compMatch;
+        });
     }
 
     if (sortBy.value === 'name') {
-        result.sort((a, b) => a.assembly.name.localeCompare(b.assembly.name));
+        result.sort((a, b) => a.name.localeCompare(b.name));
     } else if (sortBy.value === 'price') {
-        result.sort((a, b) => a.assembly.price - b.assembly.price);
+        result.sort((a, b) => a.price - b.price);
     } else {
         result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     }

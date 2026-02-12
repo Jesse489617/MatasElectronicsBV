@@ -2,10 +2,8 @@
     <Nav />
 
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <!-- Page Title -->
         <h1 class="mb-6 text-2xl font-bold text-gray-900">Available Assemblies</h1>
 
-        <!-- Search + Add Button -->
         <div v-if="isAuthenticated" class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center">
             <input
                 v-model="searchQuery"
@@ -23,7 +21,6 @@
             </Link>
         </div>
 
-        <!-- Assemblies List -->
         <div class="space-y-4">
             <Link
                 v-for="assembly in filteredAssemblies"
@@ -31,12 +28,10 @@
                 :href="`/assemblies/${assembly.id}`"
                 class="flex items-center justify-between overflow-hidden rounded-lg border bg-gray-50 transition hover:shadow-md"
             >
-                <!-- Left: Assembly Name -->
                 <div class="px-4 py-2 text-sm font-medium text-gray-900">
                     {{ assembly.name }}
                 </div>
 
-                <!-- Right: Assembly Image -->
                 <div class="h-12 w-12 shrink-0 overflow-hidden rounded-r-lg">
                     <img v-if="assembly.image" :src="`/storage/${assembly.image}`" alt="Assembly Image" class="h-full w-full object-cover" />
                     <div v-else class="flex h-full w-full items-center justify-center bg-gray-100 text-xs text-gray-400">No Image</div>
@@ -44,7 +39,6 @@
             </Link>
         </div>
 
-        <!-- Empty State -->
         <p v-if="filteredAssemblies.length === 0" class="mt-4 text-gray-500">No assemblies found.</p>
     </div>
 </template>

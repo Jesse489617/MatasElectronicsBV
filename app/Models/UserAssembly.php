@@ -12,6 +12,7 @@ class UserAssembly extends Model
     protected $fillable = [
         'user_id',
         'assembly_id',
+        'component_id',
     ];
 
     public function user(): BelongsTo
@@ -22,5 +23,10 @@ class UserAssembly extends Model
     public function assembly(): BelongsTo
     {
         return $this->belongsTo(Assembly::class);
+    }
+
+    public function component(): BelongsTo
+    {
+        return $this->belongsTo(Component::class);
     }
 }

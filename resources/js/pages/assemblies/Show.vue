@@ -4,9 +4,9 @@
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div v-if="assembly" class="bg-white">
             <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-                <!-- Top Section -->
+
                 <div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
-                    <!-- Product Image -->
+
                     <div class="flex justify-center">
                         <div class="aspect-square w-100 overflow-hidden rounded-xl border bg-gray-50 shadow-sm">
                             <img v-if="assembly.image" :src="`/storage/${assembly.image}`" alt="Assembly Image" class="h-full w-full object-cover" />
@@ -14,7 +14,6 @@
                         </div>
                     </div>
 
-                    <!-- Product Info -->
                     <div class="flex flex-col justify-between">
                         <div>
                             <div class="flex items-start justify-between">
@@ -34,13 +33,11 @@
                                 </Link>
                             </div>
 
-                            <!-- Price -->
                             <div class="mt-6">
                                 <p class="text-3xl font-semibold text-gray-900">€{{ assembly.price }}</p>
                             </div>
                         </div>
 
-                        <!-- Purchase Section -->
                         <div class="mt-10 border-t pt-6">
                             <div v-if="isAuthenticated">
                                 <div class="flex items-center gap-4">
@@ -66,7 +63,6 @@
                     </div>
                 </div>
 
-                <!-- Components Section -->
                 <div class="mt-16">
                     <h2 class="mb-6 text-2xl font-semibold text-gray-900">Included Components</h2>
 
@@ -77,12 +73,10 @@
                             :href="`/components/${comp.id}`"
                             class="flex items-center justify-between overflow-hidden rounded-lg border bg-gray-50 transition hover:shadow-md"
                         >
-                            <!-- Left: Name + Type -->
                             <div class="px-4 py-2 text-sm font-medium text-gray-900">
                                 {{ comp.name }} <span class="text-gray-500">({{ comp.type }})</span>
                             </div>
 
-                            <!-- Right: Icon -->
                             <div class="h-12 w-12 shrink-0 overflow-hidden rounded-r-lg">
                                 <img
                                     v-if="comp.image"

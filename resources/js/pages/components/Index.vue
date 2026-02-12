@@ -2,10 +2,9 @@
     <Nav />
 
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <!-- Page Title -->
+
         <h1 class="mb-6 text-2xl font-bold text-gray-900">Available Components</h1>
 
-        <!-- Search + Add Button -->
         <div v-if="isAuthenticated" class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center">
             <input
                 v-model="searchQuery"
@@ -23,7 +22,6 @@
             </Link>
         </div>
 
-        <!-- Components Grid -->
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Link
                 v-for="component in filteredComponents"
@@ -31,14 +29,11 @@
                 :href="`/components/${component.id}`"
                 class="flex items-center justify-between overflow-hidden rounded-lg border bg-gray-50 transition hover:shadow-md"
             >
-                <!-- Left: Name + Type Placeholder -->
+
                 <div class="px-4 py-2 text-sm font-medium text-gray-900">
                     {{ component.name }}
-                    <!-- Optional type could go here if available -->
-                    <!-- <span class="text-gray-500">(Type)</span> -->
                 </div>
 
-                <!-- Right: Icon -->
                 <div class="h-12 w-12 shrink-0 overflow-hidden rounded-r-lg">
                     <img
                         v-if="component.image"
@@ -51,7 +46,6 @@
             </Link>
         </div>
 
-        <!-- Empty State -->
         <p v-if="filteredComponents.length === 0" class="mt-4 text-gray-500">No components found.</p>
     </div>
 </template>
@@ -67,7 +61,7 @@ interface Component {
     id: number;
     image?: string;
     name: string;
-    type?: string; // Optional, could add if available
+    type?: string;
 }
 
 const allComponents = ref<Component[]>([]);

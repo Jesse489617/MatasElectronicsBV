@@ -1,10 +1,11 @@
 <template>
     <Nav />
+
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div v-if="component" class="bg-white">
             <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
-                    <!-- Component Image -->
+
                     <div class="flex justify-center">
                         <div class="aspect-square w-100 overflow-hidden rounded-xl border bg-gray-50 shadow-sm">
                             <img
@@ -17,14 +18,11 @@
                         </div>
                     </div>
 
-                    <!-- Component Info -->
                     <div class="flex flex-col justify-between">
                         <div>
                             <div class="flex items-start justify-between">
                                 <div>
-                                    <h1 class="text-3xl font-bold text-gray-900">
-                                        {{ component.name }}
-                                    </h1>
+                                    <h1 class="text-3xl font-bold text-gray-900">{{ component.name }}</h1>
                                     <p class="mt-1 text-sm text-gray-500">Component ID: {{ component.id }}</p>
                                 </div>
 
@@ -37,24 +35,42 @@
                                 </Link>
                             </div>
 
-                            <!-- Price -->
                             <div class="mt-6">
                                 <p class="text-3xl font-semibold text-gray-900">€{{ component.price }}</p>
                             </div>
                         </div>
 
-                        <!-- Specifications -->
                         <div class="mt-10 border-t pt-6">
                             <h2 class="mb-4 text-lg font-semibold text-gray-900">Specifications</h2>
-
                             <div class="rounded-lg border bg-gray-50 p-4">
                                 <div class="flex justify-between text-sm">
                                     <span class="text-gray-500">Type</span>
-                                    <span class="font-medium text-gray-900">
-                                        {{ component.type }}
-                                    </span>
+                                    <span class="font-medium text-gray-900">{{ component.type }}</span>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="mt-10 border-t pt-6">
+                            <div v-if="isAuthenticated">
+                                <div class="flex items-center gap-4">
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        v-model.number="quantity"
+                                        class="w-24 rounded-md border border-gray-300 px-3 py-2 text-center focus:border-black focus:outline-none"
+                                    />
+
+                                    <button
+                                        @click="buyComponent"
+                                        :disabled="isBuying"
+                                        class="flex-1 rounded-md bg-black px-6 py-3 font-medium text-white transition hover:bg-gray-800 disabled:opacity-50"
+                                    >
+                                        {{ isBuying ? 'Processing...' : 'Add to Cart' }}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div v-else class="text-sm text-gray-500">You must be logged in to purchase this component.</div>
                         </div>
                     </div>
                 </div>
@@ -70,7 +86,7 @@ import { Link } from '@inertiajs/vue3';
 import { ref, onMounted } from 'vue';
 import Nav from '@/components/Nav.vue';
 import axios from '@/lib/axios';
-import { user } from '@/stores/auth';
+import { user, isAuthenticated } from '@/stores/auth';
 
 interface Component {
     id: number;
@@ -84,9 +100,42 @@ const props = defineProps<{ id: string }>();
 const id = Number(props.id);
 
 const component = ref<Component | null>(null);
+const quantity = ref(1);
+const isBuying = ref(false);
 
 onMounted(async () => {
-    const response = await axios.get(`/api/components/${id}`);
-    component.value = response.data.component;
+    try {
+        const response = await axios.get(`/api/components/${id}`);
+        component.value = response.data.component;
+    } catch (err) {
+        console.error('Error fetching component:', err);
+    }
 });
+
+const buyComponent = async () => {
+    if (!component.value || quantity.value < 1) return;
+
+    isBuying.value = true;
+
+    try {
+        const response = await axios.post(
+            '/api/components/buy',
+            {
+                component_id: component.value.id,
+                quantity: quantity.value,
+            },
+            {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+            },
+        );
+
+        alert(response.data.message);
+        quantity.value = 1;
+    } catch (err: any) {
+        console.error(err);
+        alert(err.response?.data?.message || 'Purchase failed');
+    } finally {
+        isBuying.value = false;
+    }
+};
 </script>

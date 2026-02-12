@@ -5,13 +5,11 @@
         <h1 class="mb-6 text-2xl font-bold">Create New Component</h1>
 
         <form @submit.prevent="submit" enctype="multipart/form-data">
-            <!-- Name -->
             <div class="mb-4">
                 <label class="mb-1 block font-semibold">Component Name</label>
                 <input v-model="name" type="text" class="w-full rounded border p-2" maxlength="50" required />
             </div>
 
-            <!-- Manufacturer -->
             <div class="mb-4">
                 <label class="mb-1 block font-semibold">Manufacturer</label>
                 <select v-model="manufacturerId" class="w-full rounded border p-2" required>
@@ -22,25 +20,21 @@
                 </select>
             </div>
 
-            <!-- Type -->
             <div class="mb-4">
                 <label class="mb-1 block font-semibold">Type</label>
                 <input v-model="type" type="text" class="w-full rounded border p-2" maxlength="50" required />
             </div>
 
-            <!-- IMAGE UPLOAD -->
             <div class="mb-4">
                 <label class="mb-1 block font-semibold">Upload Image</label>
                 <input type="file" @change="handleFileUpload" class="w-full rounded border p-2" accept="image/*" />
             </div>
 
-            <!-- Preview -->
             <div v-if="imagePreview" class="mb-4">
                 <p class="mb-2 font-semibold">Preview:</p>
                 <img :src="imagePreview" class="h-40 rounded border object-cover" alt="Component Image Preview" />
             </div>
 
-            <!-- Price -->
             <div class="mb-4">
                 <label class="mb-1 block font-semibold">Price (€)</label>
                 <input v-model="price" type="number" min="0" step="0.01" class="w-full rounded border p-2" required />
