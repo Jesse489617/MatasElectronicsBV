@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreComponentRequest extends FormRequest
+class StoreAssemblyRequest  extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,10 @@ class StoreComponentRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:50',
-            'manufacturer_id' => 'required|integer|exists:manufactures,id',
-            'type' => 'required|string|max:50',
-            'image' => 'nullable|string|max:255',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'price' => 'required|numeric|min:0',
+            'components' => 'required|array|min:1',
+            'components.*' => 'exists:components,id',
         ];
     }
 }

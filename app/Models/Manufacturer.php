@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Manufacturer extends Model
 {
-    use HasFactory;
+    //use HasFactory;
 
     protected $table = 'manufactures';
 

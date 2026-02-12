@@ -26,12 +26,19 @@ Route::post('user/register', [UserController::class, 'store']);
 Route::post('user/login', [UserController::class, 'auth']);
 
 // Component API
-Route::middleware('auth:sanctum', AdminMiddleware::class)->post('/components/create', [ComponentController::class, 'store']);
+Route::middleware('auth:sanctum', AdminMiddleware::class)->group(function () {
+    Route::post('components/create', [ComponentController::class, 'store']);
+    Route::put('components/{id}', [ComponentController::class, 'update']);
+});
 Route::get('/components', [ComponentController::class, 'index']);
 Route::get('/components/{id}', [ComponentController::class, 'show']);
 
 // Assemblies API
-Route::middleware('auth:sanctum', AdminMiddleware::class)->post('/assemblies/create', [AssemblyController::class, 'store']);
+Route::middleware('auth:sanctum', AdminMiddleware::class)->group(function () {
+    Route::post('assemblies/create', [AssemblyController::class, 'store']);
+    Route::put('assemblies/{id}', [AssemblyController::class, 'update']);
+});
+
 Route::middleware('auth:sanctum')->post('/assemblies/buy', [AssemblyController::class, 'buy']);
 Route::get('/assemblies', [AssemblyController::class, 'index']);
 Route::get('/assemblies/{id}', [AssemblyController::class, 'show']);

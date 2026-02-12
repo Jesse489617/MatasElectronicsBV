@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Assembly extends Model
 {
-    use HasFactory;
+    //use HasFactory;
 
     protected $fillable = [
         'name',

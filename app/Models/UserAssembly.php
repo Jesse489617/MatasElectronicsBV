@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserAssembly extends Model
 {
-    use HasFactory;
+    //use HasFactory;
 
     protected $table = 'user_assemblies';
 

@@ -35,4 +35,16 @@ class ComponentController extends Controller
         ]);
     }
 
+    public function update(StoreComponentRequest $request, $id)
+    {
+        $component = Component::findOrFail($id);
+
+        $component->update($request->validated());
+
+        return response()->json([
+            'message' => 'Component updated successfully',
+            'component' => $component,
+        ]);
+    }
+
 }

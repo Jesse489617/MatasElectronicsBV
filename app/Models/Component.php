@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Component extends Model
 {
-    use HasFactory;
+    //use HasFactory;
 
     protected $fillable = [
         'name',
@@ -17,11 +17,6 @@ class Component extends Model
         'image',
         'price',
     ];
-
-    // public function manufacturer(): BelongsTo
-    // {
-    //     return $this->belongsTo(Manufacturer::class);
-    // }
 
     public function assemblies(): BelongsToMany
     {

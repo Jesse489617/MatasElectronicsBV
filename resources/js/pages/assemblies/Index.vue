@@ -1,66 +1,66 @@
 <template>
-  <Header />
+    <Nav />
 
-  <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-    <h1 class="text-2xl font-bold mb-4">Available Assemblies</h1>
+    <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <h1 class="mb-4 text-2xl font-bold">Available Assemblies</h1>
 
-    <div v-if="user?.is_admin" class="my-4">
-      <Link href="/assemblies/create" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-        + Add Assembly
-      </Link>
+        <div v-if="isAuthenticated" class="mb-4 flex items-center gap-4">
+            <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Search assemblies..."
+                class="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-gray-500 focus:outline-none"
+            />
+
+            <Link v-if="user?.is_admin" href="/assemblies/create" class="rounded-md bg-gray-600 px-4 py-2 whitespace-nowrap text-white transition hover:bg-gray-700">
+                + Add Assembly
+            </Link>
+        </div>
+
+        <ul class="space-y-4">
+            <li v-for="assembly in filteredAssemblies" :key="assembly.id" class="rounded bg-white p-4 shadow hover:shadow-lg">
+                <Link :href="`/assemblies/${assembly.id}`" class="font-semibold text-gray-600">
+                    {{ assembly.name }}
+                </Link>
+            </li>
+        </ul>
+
+        <p v-if="filteredAssemblies.length === 0" class="mt-4 text-gray-500">No assemblies found.</p>
     </div>
-
-    <div v-if="isAuthenticated" class="mb-4">
-      <input v-model="searchQuery" type="text" placeholder="Search assemblies..." class="p-2 border rounded w-full"/>
-    </div>
-
-    <ul class="space-y-4">
-      <li v-for="assembly in filteredAssemblies" :key="assembly.id" class="p-4 bg-white rounded shadow hover:shadow-lg" >
-        <Link :href="`/assemblies/${assembly.id}`" class="text-indigo-600 font-semibold">
-          {{ assembly.name }}
-        </Link>
-      </li>
-    </ul>
-
-    <p v-if="filteredAssemblies.length === 0" class="text-gray-500 mt-4">
-      No assemblies found.
-    </p>
-  </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue'
-  import { Link } from '@inertiajs/vue3'
-  import axios from '@/lib/axios';
-  import Header from '@/components/Header.vue'
-  import { user, isAuthenticated } from '@/stores/auth'
+    import { Link } from '@inertiajs/vue3';
+    import { ref, computed, onMounted } from 'vue';
+    import Nav from '@/components/Nav.vue';
+    import axios from '@/lib/axios';
 
-  interface Assembly {
-    id: number
-    name: string
-  }
+    import { user, isAuthenticated } from '@/stores/auth';
 
-  const allAssemblies = ref<Assembly[]>([])
-  const searchQuery = ref('')
-
-  const fetchAssemblies = async () => {
-    try {
-      const response = await axios.get('/api/assemblies')
-      allAssemblies.value = response.data.assemblies ?? response.data
-    } catch (error) {
-      console.error('Failed to fetch assemblies:', error)
+    interface Assembly {
+        id: number;
+        name: string;
     }
-  }
 
-  onMounted(fetchAssemblies)
+    const allAssemblies = ref<Assembly[]>([]);
+    const searchQuery = ref('');
 
-  const filteredAssemblies = computed(() => {
-    if (!isAuthenticated.value || !searchQuery.value) {
-      return allAssemblies.value
-    }
-    
-    return allAssemblies.value.filter((assembly) =>
-      assembly.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    )
-  })
+    const fetchAssemblies = async () => {
+        try {
+            const response = await axios.get('/api/assemblies');
+            allAssemblies.value = response.data.assemblies ?? response.data;
+        } catch (error) {
+            console.error('Failed to fetch assemblies:', error);
+        }
+    };
+
+    onMounted(fetchAssemblies);
+
+    const filteredAssemblies = computed(() => {
+        if (!isAuthenticated.value || !searchQuery.value) {
+            return allAssemblies.value;
+        }
+
+        return allAssemblies.value.filter((assembly) => assembly.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+    });
 </script>
