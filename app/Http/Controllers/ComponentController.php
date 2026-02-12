@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreComponentRequest;
+use App\Http\Requests\components\BuyComponentRequest;
+use App\Http\Requests\components\StoreComponentRequest;
+use App\Http\Requests\components\UpdateComponentRequest;
 use App\Models\Component;
 use DB;
 use Illuminate\Http\Request;
@@ -29,13 +31,8 @@ class ComponentController extends Controller
         ]);
     }
 
-    public function buy(Request $request)
+    public function buy(BuyComponentRequest $request)
     {
-        $request->validate([
-            'component_id' => 'required|exists:components,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
-
         $user = $request->user();
         $componentId = $request->component_id;
         $quantity = $request->quantity;
@@ -57,6 +54,7 @@ class ComponentController extends Controller
             'message' => "Successfully purchased $quantity component(s).",
         ]);
     }
+
 
     public function store(StoreComponentRequest $request)
     {
@@ -98,7 +96,7 @@ class ComponentController extends Controller
         ]);
     }
 
-    public function update(StoreComponentRequest $request, $id)
+    public function update(UpdateComponentRequest $request, $id)
     {
         $component = Component::findOrFail($id);
 
