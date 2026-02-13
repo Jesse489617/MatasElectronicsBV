@@ -19,7 +19,7 @@
                 <div>
                     <h2 class="text-xl font-semibold">
                         {{ item.name }}
-                        <span v-if="item.type === 'component'" class="text-sm text-gray-400">(Component)</span>
+                        <span v-if="item.type === 'component'" class="text-sm text-gray-400"> (Component) </span>
                     </h2>
                     <p class="text-sm text-gray-500">Purchased on {{ formatDate(item.created_at) }}</p>
                 </div>
@@ -27,11 +27,23 @@
                 <div class="text-right font-semibold">€{{ item.price }}</div>
             </div>
 
-            <div v-if="item.type === 'assembly' && item.components?.length" class="mt-4">
-                <p class="mb-1 font-semibold">Components</p>
-                <ul class="list-inside list-disc">
-                    <li v-for="component in item.components" :key="component.id">{{ component.name }}</li>
-                </ul>
+            <div v-if="item.type === 'assembly'" class="mt-4">
+                <p class="mb-2 font-semibold">Components</p>
+
+                <div class="flex items-end justify-between">
+                    <ul v-if="item.components?.length" class="flex-1 list-inside list-disc">
+                        <li v-for="component in item.components" :key="component.id">
+                            {{ component.name }}
+                        </li>
+                    </ul>
+                    <button
+                        @click="downloadInvoice(item.id)"
+                        :disabled="downloadingInvoice[item.id]"
+                        class="ml-6 rounded-md bg-gray-600 px-4 py-2 text-white hover:bg-gray-700 disabled:opacity-50"
+                    >
+                        {{ downloadingInvoice[item.id] ? 'Downloading...' : 'Download Invoice' }}
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -41,14 +53,16 @@
 
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
-import axios from 'axios';
 import { ref, computed, onMounted } from 'vue';
 import Nav from '@/components/Nav.vue';
+import { downloadInvoice as downloadInvoiceFile } from '@/lib/history/downloadInvoice';
+import { getHistory } from '@/lib/history/getHistory';
 import { isAuthenticated, fetchUser } from '@/stores/auth';
 
 const history = ref<any[]>([]);
 const search = ref('');
 const sortBy = ref<'date' | 'name' | 'price'>('date');
+const downloadingInvoice = ref<Record<number, boolean>>({});
 
 onMounted(async () => {
     await fetchUser();
@@ -59,13 +73,9 @@ onMounted(async () => {
     }
 
     try {
-        const response = await axios.get('/api/history', {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-        });
+        const data = await getHistory();
 
-        history.value = response.data.history.map((row: any) => {
+        history.value = data.map((row: any) => {
             if (row.type === 'assembly' && row.assembly) {
                 return {
                     id: row.id,
@@ -84,6 +94,7 @@ onMounted(async () => {
                     created_at: row.created_at,
                 };
             }
+
             return {
                 id: row.id,
                 type: 'unknown',
@@ -121,4 +132,27 @@ const filteredHistory = computed(() => {
 });
 
 const formatDate = (date: string) => new Date(date).toLocaleDateString();
+
+const downloadInvoice = async (id: number) => {
+    try {
+        downloadingInvoice.value[id] = true;
+
+        const blob = await downloadInvoiceFile(id);
+
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `invoice-${id}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        window.URL.revokeObjectURL(url);
+    } catch (err: any) {
+        console.error(err);
+        alert(err.response?.data?.message || 'Failed to download invoice');
+    } finally {
+        downloadingInvoice.value[id] = false;
+    }
+};
 </script>

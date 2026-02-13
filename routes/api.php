@@ -46,6 +46,7 @@ Route::get('/assemblies/{id}', [AssemblyController::class, 'show']);
 
 // History API
 Route::middleware('auth:sanctum')->get('/history', [HistoryController::class, 'index']);
+Route::middleware('auth:sanctum')->get('/history/{id}/invoice', [HistoryController::class, 'invoice']);
 
 // Manufacturer API
 Route::middleware('auth:sanctum')->get('/manufacturers', [ManufacturerController::class, 'index']);

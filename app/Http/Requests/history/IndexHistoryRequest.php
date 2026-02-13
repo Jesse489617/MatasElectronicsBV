@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\auth;
+namespace App\Http\Requests\history;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LogoutUserRequest extends FormRequest
+class IndexHistoryRequest extends FormRequest
 {
     public function authorize(): bool
     {
