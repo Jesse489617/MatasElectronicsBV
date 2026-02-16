@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\components\BuyComponentRequest;
 use App\Http\Requests\components\StoreComponentRequest;
 use App\Http\Requests\components\UpdateComponentRequest;
+use App\Models\Cart;
+use App\Models\CartItem;
 use App\Models\Component;
 use DB;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -43,6 +44,7 @@ class ComponentController extends Controller
                 'user_id' => $user->id,
                 'assembly_id' => null,
                 'component_id' => $componentId,
+                'custom_assembly_id' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -55,6 +57,26 @@ class ComponentController extends Controller
         ]);
     }
 
+    public function addCart(BuyComponentRequest $request)
+    {
+        $user = $request->user();
+
+        $cart = Cart::firstOrCreate([
+            'user_id' => $user->id,
+        ]);
+
+        CartItem::create([
+            'cart_id' => $cart->id,
+            'assembly_id' => null,
+            'component_id' => $request->component_id,
+            'custom_assembly_id' => null,
+            'quantity' => $request->quantity,
+        ]);
+
+        return response()->json([
+            'message' => 'Component added to cart.',
+        ]);
+    }
 
     public function store(StoreComponentRequest $request)
     {

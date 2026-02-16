@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -50,4 +51,28 @@ class User extends Authenticatable
         ];
     }
 
+    public function userAssemblies(): HasMany
+    {
+        return $this->hasMany(UserAssembly::class);
+    }
+
+    public function customAssemblies(): HasMany
+    {
+        return $this->hasMany(CustomAssembly::class);
+    }
+
+    public function cart(): HasMany
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    public function cartItems(): HasMany
+    {
+        return $this->hasManyThrough(CartItem::class, Cart::class);
+    }
+
+    public function assemblies(): BelongsToMany
+    {
+        return $this->belongsToMany(Assembly::class, 'user_assemblies');
+    }
 }

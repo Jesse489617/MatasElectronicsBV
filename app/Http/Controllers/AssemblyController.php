@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Assemblies\IndexAssemblyRequest;
 use App\Http\Requests\Assemblies\BuyAssemblyRequest;
+use App\Http\Requests\assemblies\BuyCustomAssemblyRequest;
+use App\Http\Requests\Assemblies\IndexAssemblyRequest;
 use App\Http\Requests\assemblies\StoreAssemblyRequest;
+use App\Http\Requests\assemblies\StoreCustomAssemblyRequest;
 use App\Http\Requests\assemblies\UpdateAssemblyRequest;
 use App\Models\Assembly;
 use App\Models\AssemblyComponent;
+use App\Models\Cart;
+use App\Models\CartItem;
+use App\Models\CustomAssembly;
+use App\Models\CustomAssemblyComponent;
 use DB;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -55,6 +60,7 @@ class AssemblyController extends Controller
                 'user_id' => $user->id,
                 'assembly_id' => $assemblyId,
                 'component_id' => null,
+                'custom_assembly_id' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -64,6 +70,27 @@ class AssemblyController extends Controller
 
         return response()->json([
             'message' => "Successfully purchased $quantity assembly(s).",
+        ]);
+    }
+
+    public function addCart(BuyAssemblyRequest $request)
+    {
+        $user = $request->user();
+
+        $cart = Cart::firstOrCreate([
+            'user_id' => $user->id,
+        ]);
+
+        CartItem::create([
+            'cart_id' => $cart->id,
+            'assembly_id' => $request->assembly_id,
+            'component_id' => null,
+            'custom_assembly_id' => null,
+            'quantity' => $request->quantity,
+        ]);
+
+        return response()->json([
+            'message' => 'Assembly added to cart.',
         ]);
     }
 
@@ -173,4 +200,38 @@ class AssemblyController extends Controller
 
         return response()->json(['assembly' => $assembly]);
     }
+
+    public function custom(StoreCustomAssemblyRequest $request)
+    {
+        $user = $request->user();
+        $data = $request->validated();
+
+        $customAssembly = CustomAssembly::create([
+            'user_id' => $user->id,
+            'name' => $data['name'],
+            'price' => $data['price'],
+        ]);
+
+        foreach ($data['components'] as $componentId) {
+            CustomAssemblyComponent::create([
+                'custom_assembly_id' => $customAssembly->id,
+                'component_id' => $componentId,
+            ]);
+        }
+
+        $cart = Cart::firstOrCreate([
+            'user_id' => $user->id,
+        ]);
+
+        $cart->items()->create([
+            'custom_assembly_id' => $customAssembly->id,
+            'quantity' => 1,
+        ]);
+
+        return response()->json([
+            'custom_assembly' => $customAssembly->load('components'),
+            'message' => 'Custom assembly created and added to cart',
+        ], 201);
+    }
 }
+

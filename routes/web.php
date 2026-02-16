@@ -41,6 +41,10 @@ Route::get('/assemblies', function () {
     return Inertia::render('assemblies/Index');
 })->name('assemblies.index');
 
+Route::get('/assemblies/custom', function () {
+    return Inertia::render('assemblies/Custom');
+})->name('assemblies.custom');
+
 Route::middleware(AdminWebMiddleware::class)->group(function () {
     Route::get('/assemblies/create', function () {
         return Inertia::render('assemblies/Create');
@@ -59,6 +63,11 @@ Route::get('/assemblies/{id}', function ($id) {
 Route::get('/history', function () {
     return Inertia::render('History');
 })->name('history');
+
+// Cart page
+Route::get('/cart', function () {
+    return Inertia::render('Cart');
+})->name('cart');
 
 
 

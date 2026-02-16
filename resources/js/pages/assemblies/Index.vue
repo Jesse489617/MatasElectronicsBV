@@ -12,6 +12,10 @@
                 class="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-gray-500 focus:outline-none"
             />
 
+            <Link href="/assemblies/custom" class="rounded-md bg-gray-600 px-4 py-2 whitespace-nowrap text-white transition hover:bg-gray-700">
+                + Custom Assembly
+            </Link>
+
             <Link
                 v-if="user?.is_admin"
                 href="/assemblies/create"

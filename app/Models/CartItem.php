@@ -5,20 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserAssembly extends Model
+class CartItem extends Model
 {
-    protected $table = 'user_assemblies';
-
     protected $fillable = [
-        'user_id',
+        'cart_id',
         'assembly_id',
         'component_id',
         'custom_assembly_id',
+        'quantity',
     ];
 
-    public function user(): BelongsTo
+    public function cart(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Cart::class);
     }
 
     public function assembly(): BelongsTo
@@ -29,5 +28,10 @@ class UserAssembly extends Model
     public function component(): BelongsTo
     {
         return $this->belongsTo(Component::class);
+    }
+
+    public function customAssembly(): BelongsTo
+    {
+        return $this->belongsTo(CustomAssembly::class);
     }
 }

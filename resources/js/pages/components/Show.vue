@@ -66,6 +66,14 @@
                                     >
                                         {{ isBuying ? 'Processing...' : 'Add to Cart' }}
                                     </button>
+
+                                    <button
+                                        @click="handleAddToCart"
+                                        :disabled="isBuying"
+                                        class="flex items-center justify-center rounded-md bg-black p-3 text-white transition hover:bg-gray-800 disabled:opacity-50"
+                                    >
+                                        <ShoppingCartIcon class="h-6 w-6" />
+                                    </button>
                                 </div>
                             </div>
 
@@ -81,9 +89,11 @@
 </template>
 
 <script setup lang="ts">
+import { ShoppingCartIcon } from '@heroicons/vue/24/solid';
 import { Link } from '@inertiajs/vue3';
 import { ref, onMounted, defineProps } from 'vue';
 import Nav from '@/components/Nav.vue';
+import { addComponentToCart } from '@/lib/components/addComponentToCart';
 import { buyComponent } from '@/lib/components/buyComponent';
 import { getComponentById } from '@/lib/components/getComponentById';
 import { user, isAuthenticated } from '@/stores/auth';
@@ -95,6 +105,7 @@ const id = Number(props.id);
 const component = ref<Component | null>(null);
 const quantity = ref(1);
 const isBuying = ref(false);
+const isAdding = ref(false);
 
 onMounted(async () => {
     try {
@@ -122,6 +133,27 @@ const handleBuyComponent = async () => {
         alert(err.response?.data?.message || 'Purchase failed');
     } finally {
         isBuying.value = false;
+    }
+};
+
+const handleAddToCart = async () => {
+    if (!component.value || quantity.value < 1) return;
+
+    isAdding.value = true;
+
+    try {
+        const data = await addComponentToCart({
+            component_id: component.value.id,
+            quantity: quantity.value,
+        });
+
+        alert(data.message);
+        quantity.value = 1;
+    } catch (error: any) {
+        console.error(error);
+        alert(error.response?.data?.message || 'Failed to add to cart');
+    } finally {
+        isAdding.value = false;
     }
 };
 </script>

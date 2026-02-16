@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AssemblyController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\ManufacturerController;
@@ -30,7 +31,11 @@ Route::middleware('auth:sanctum', AdminMiddleware::class)->group(function () {
     Route::put('components/{id}', [ComponentController::class, 'update']);
 });
 
-Route::middleware('auth:sanctum')->post('/components/buy', [ComponentController::class, 'buy']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/components/cart', [ComponentController::class, 'addCart']);
+    Route::post('components/buy', [ComponentController::class, 'buy']);
+});
+
 Route::get('/components', [ComponentController::class, 'index']);
 Route::get('/components/{id}', [ComponentController::class, 'show']);
 
@@ -40,7 +45,12 @@ Route::middleware('auth:sanctum', AdminMiddleware::class)->group(function () {
     Route::put('assemblies/{id}', [AssemblyController::class, 'update']);
 });
 
-Route::middleware('auth:sanctum')->post('/assemblies/buy', [AssemblyController::class, 'buy']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/assemblies/cart', [AssemblyController::class, 'addCart']);
+    Route::post('assemblies/buy', [AssemblyController::class, 'buy']);
+    Route::post('assemblies/custom', [AssemblyController::class, 'custom']);
+});
+
 Route::get('/assemblies', [AssemblyController::class, 'index']);
 Route::get('/assemblies/{id}', [AssemblyController::class, 'show']);
 
@@ -50,3 +60,12 @@ Route::middleware('auth:sanctum')->get('/history/{id}/invoice', [HistoryControll
 
 // Manufacturer API
 Route::middleware('auth:sanctum')->get('/manufacturers', [ManufacturerController::class, 'index']);
+
+// Cart API
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/cart', [CartController::class, 'index']);
+    Route::delete('/cart/items/{id}', [CartController::class, 'removeItem']);
+    Route::post('/cart/checkout', [CartController::class, 'checkout']);
+});
+
+

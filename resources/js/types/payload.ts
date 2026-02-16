@@ -21,6 +21,12 @@ export interface CreateAssemblyPayload {
     image?: File | null;
 }
 
+export interface CreateCustomAssemblyPayload {
+    name: string;
+    price: number;
+    components: number[];
+}
+
 export interface BuyComponentPayload {
     component_id: number;
     quantity: number;
