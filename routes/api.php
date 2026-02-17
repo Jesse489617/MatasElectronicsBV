@@ -1,9 +1,17 @@
 <?php
 
+use App\Http\Controllers\AssemblyCartController;
 use App\Http\Controllers\AssemblyController;
+use App\Http\Controllers\BuyAssemblyController;
+use App\Http\Controllers\BuyComponentController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ComponentCartController;
 use App\Http\Controllers\ComponentController;
+use App\Http\Controllers\CustomAssemblyController;
+use App\Http\Controllers\DownloadInvoiceController;
 use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminMiddleware;
@@ -19,11 +27,11 @@ Route::middleware('auth:sanctum')->group(function () {
         ];
     });
 
-    Route::post('user/logout', [UserController::class, 'logout']);
+    Route::post('user/logout', LogoutController::class);
 });
 
 Route::post('user/register', [UserController::class, 'store']);
-Route::post('user/login', [UserController::class, 'auth']);
+Route::post('user/login', LoginController::class);
 
 // Component API
 Route::middleware('auth:sanctum', AdminMiddleware::class)->group(function () {
@@ -32,8 +40,8 @@ Route::middleware('auth:sanctum', AdminMiddleware::class)->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/components/cart', [ComponentController::class, 'addCart']);
-    Route::post('components/buy', [ComponentController::class, 'buy']);
+    Route::post('/components/cart', [ComponentCartController::class, 'store']);
+    Route::post('components/buy', [BuyComponentController::class, 'store']);
 });
 
 Route::get('/components', [ComponentController::class, 'index']);
@@ -42,21 +50,21 @@ Route::get('/components/{id}', [ComponentController::class, 'show']);
 // Assemblies API
 Route::middleware('auth:sanctum', AdminMiddleware::class)->group(function () {
     Route::post('assemblies/create', [AssemblyController::class, 'store']);
-    Route::put('assemblies/{id}', [AssemblyController::class, 'update']);
+    Route::put('assemblies/{assembly}', [AssemblyController::class, 'update']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/assemblies/cart', [AssemblyController::class, 'addCart']);
-    Route::post('assemblies/buy', [AssemblyController::class, 'buy']);
-    Route::post('assemblies/custom', [AssemblyController::class, 'custom']);
+    Route::post('assemblies/cart', [AssemblyCartController::class, 'store']);
+    Route::post('assemblies/buy', [BuyAssemblyController::class, 'store']);
+    Route::post('assemblies/custom', [CustomAssemblyController::class, 'store']);
 });
 
 Route::get('/assemblies', [AssemblyController::class, 'index']);
-Route::get('/assemblies/{id}', [AssemblyController::class, 'show']);
+Route::get('/assemblies/{assembly}', [AssemblyController::class, 'show']);
 
 // History API
 Route::middleware('auth:sanctum')->get('/history', [HistoryController::class, 'index']);
-Route::middleware('auth:sanctum')->get('/history/{id}/invoice', [HistoryController::class, 'invoice']);
+Route::middleware('auth:sanctum')->get('/history/{id}/invoice', DownloadInvoiceController::class);
 
 // Manufacturer API
 Route::middleware('auth:sanctum')->get('/manufacturers', [ManufacturerController::class, 'index']);
@@ -64,7 +72,7 @@ Route::middleware('auth:sanctum')->get('/manufacturers', [ManufacturerController
 // Cart API
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cart', [CartController::class, 'index']);
-    Route::delete('/cart/items/{id}', [CartController::class, 'removeItem']);
+    Route::delete('/cart/items/{id}', [CartController::class, 'delete']);
     Route::post('/cart/checkout', [CartController::class, 'checkout']);
 });
 

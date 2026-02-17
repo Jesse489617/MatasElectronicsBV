@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\components\BuyComponentRequest;
+use App\Http\Requests\components\IndexComponentRequest;
 use App\Http\Requests\components\StoreComponentRequest;
 use App\Http\Requests\components\UpdateComponentRequest;
+use App\Http\Resources\Component as ComponentResource;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Component;
 use DB;
+use Faker\Guesser\Name;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -16,11 +20,16 @@ use Intervention\Image\ImageManager;
 
 class ComponentController extends Controller
 {
-    public function index()
+    public function index(IndexComponentRequest $request)
     {
-        return response()->json([
-            'components' => Component::all(),
-        ]);
+        $components = Component::query()
+            ->when(
+                $request->has('search') && $request->user(),
+                fn (Builder $query) => $query->where('name', 'like', '%'.$request->search.'%')
+            )
+            ->get();
+
+        return ComponentResource::collection($components);
     }
 
     public function show($id)
@@ -29,52 +38,6 @@ class ComponentController extends Controller
 
         return response()->json([
             'component' => $component,
-        ]);
-    }
-
-    public function buy(BuyComponentRequest $request)
-    {
-        $user = $request->user();
-        $componentId = $request->component_id;
-        $quantity = $request->quantity;
-
-        $rows = [];
-        for ($i = 0; $i < $quantity; $i++) {
-            $rows[] = [
-                'user_id' => $user->id,
-                'assembly_id' => null,
-                'component_id' => $componentId,
-                'custom_assembly_id' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
-
-        DB::table('user_assemblies')->insert($rows);
-
-        return response()->json([
-            'message' => "Successfully purchased $quantity component(s).",
-        ]);
-    }
-
-    public function addCart(BuyComponentRequest $request)
-    {
-        $user = $request->user();
-
-        $cart = Cart::firstOrCreate([
-            'user_id' => $user->id,
-        ]);
-
-        CartItem::create([
-            'cart_id' => $cart->id,
-            'assembly_id' => null,
-            'component_id' => $request->component_id,
-            'custom_assembly_id' => null,
-            'quantity' => $request->quantity,
-        ]);
-
-        return response()->json([
-            'message' => 'Component added to cart.',
         ]);
     }
 

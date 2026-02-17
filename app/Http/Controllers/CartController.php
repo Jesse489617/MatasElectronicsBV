@@ -56,7 +56,7 @@ class CartController
         ]);
     }
 
-    public function removeItem($id)
+    public function delete($id)
     {
         $item = CartItem::whereHas('cart', function ($q) {
             $q->where('user_id', auth()->id());
