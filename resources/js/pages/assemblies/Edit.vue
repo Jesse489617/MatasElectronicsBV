@@ -16,7 +16,7 @@
 
             <div v-if="imagePreview || image" class="mb-4">
                 <p class="mb-2 font-semibold">Preview:</p>
-                <img :src="imagePreview || `/storage/${image}`" class="h-40 rounded border object-cover" alt="Assembly Image Preview" />
+                <img :src="imagePreview || image?.main" class="h-40 rounded border object-cover" alt="Assembly Image Preview" />
             </div>
 
             <div class="mb-4">
@@ -50,12 +50,12 @@ import Nav from '@/components/Nav.vue';
 import { getAssemblyById } from '@/lib/assemblies/getAssemblyById';
 import { updateAssembly } from '@/lib/assemblies/updateAssembly';
 import { getComponents } from '@/lib/components/getComponents';
-import type { Component, AssemblyComponents } from '@/types/interfaces';
+import type { Component, AssemblyComponents, ImageAsset } from '@/types/interfaces';
 
 const props = defineProps<{ id: string }>();
 
 const name = ref('');
-const image = ref('');
+const image = ref<ImageAsset | null>(null);
 const imageFile = ref<File | null>(null);
 const imagePreview = ref<string | null>(null);
 
@@ -65,12 +65,13 @@ const selectedComponents = ref<number[]>([]);
 
 onMounted(async () => {
     try {
-        components.value = await getComponents();
+        const response = await getComponents();
+        components.value = response.data ?? response;
 
         const assembly: AssemblyComponents = await getAssemblyById(props.id);
 
         name.value = assembly.name;
-        image.value = assembly.image ?? '';
+        image.value = assembly.image;
         price.value = assembly.price;
         selectedComponents.value = assembly.components.map((c) => c.id);
     } catch (err) {

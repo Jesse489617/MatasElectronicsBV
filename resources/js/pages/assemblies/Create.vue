@@ -60,7 +60,8 @@ const imagePreview = ref<string | null>(null);
 
 onMounted(async () => {
     try {
-        components.value = await getComponents();
+        const response = await getComponents();
+        components.value = response.data ?? response;
     } catch (err) {
         console.error('Failed to load components', err);
     }

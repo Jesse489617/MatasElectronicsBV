@@ -7,7 +7,7 @@
                 <div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
                     <div class="flex justify-center">
                         <div class="aspect-square w-100 overflow-hidden rounded-xl border bg-gray-50 shadow-sm">
-                            <img v-if="assembly.image" :src="`/storage/${assembly.image}`" alt="Assembly Image" class="h-full w-full object-cover" />
+                            <img v-if="assembly.image" :src="assembly.image.main" alt="Assembly Image" class="h-full w-full object-cover" />
                             <div v-else class="flex h-full items-center justify-center text-gray-400">No Image</div>
                         </div>
                     </div>
@@ -86,7 +86,7 @@
                             <div class="h-12 w-12 shrink-0 overflow-hidden rounded-r-lg">
                                 <img
                                     v-if="comp.image"
-                                    :src="`/storage/${comp.image.replace('components/', 'components/icons/')}`"
+                                    :src="comp.image.icon"
                                     alt="Component Icon"
                                     class="h-full w-full object-cover"
                                 />

@@ -35,7 +35,7 @@
                 <div class="h-12 w-12 shrink-0 overflow-hidden rounded-r-lg">
                     <img
                         v-if="component.image"
-                        :src="`/storage/${component.image.replace('components/', 'components/icons/')}`"
+                        :src="component.image.icon"
                         alt="Component Icon"
                         class="h-full w-full object-cover"
                     />

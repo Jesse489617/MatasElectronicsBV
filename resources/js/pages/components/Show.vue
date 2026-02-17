@@ -9,7 +9,7 @@
                         <div class="aspect-square w-100 overflow-hidden rounded-xl border bg-gray-50 shadow-sm">
                             <img
                                 v-if="component.image"
-                                :src="`/storage/${component.image}`"
+                                :src="component.image.main"
                                 alt="Component Image"
                                 class="h-full w-full object-cover"
                             />

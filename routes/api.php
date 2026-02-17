@@ -36,7 +36,7 @@ Route::post('user/login', LoginController::class);
 // Component API
 Route::middleware('auth:sanctum', AdminMiddleware::class)->group(function () {
     Route::post('components/create', [ComponentController::class, 'store']);
-    Route::put('components/{id}', [ComponentController::class, 'update']);
+    Route::put('components/{component}', [ComponentController::class, 'update']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -45,7 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::get('/components', [ComponentController::class, 'index']);
-Route::get('/components/{id}', [ComponentController::class, 'show']);
+Route::get('/components/{component}', [ComponentController::class, 'show']);
 
 // Assemblies API
 Route::middleware('auth:sanctum', AdminMiddleware::class)->group(function () {

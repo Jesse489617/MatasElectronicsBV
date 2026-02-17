@@ -27,11 +27,7 @@
 
             <div v-if="user" class="relative flex items-center gap-4">
                 <!-- Cart Icon -->
-                <Link
-                    href="/cart"
-                    class="flex h-10 w-10 items-center justify-center rounded-md text-white hover:bg-gray-800"
-                    title="Your Cart"
-                >
+                <Link href="/cart" class="flex h-10 w-10 items-center justify-center rounded-md text-white hover:bg-gray-800" title="Your Cart">
                     <ShoppingCartIcon class="h-6 w-6" />
                 </Link>
 
@@ -40,7 +36,7 @@
                     id="user-avatar"
                     @click="toggleMenu"
                     class="h-10 w-10 cursor-pointer rounded-full object-cover"
-                    :src="`https://intranet.matas.nl/avatars/${user.id}?size=60`"
+                    :src="`https://intranet.matas.nl/avatars/420?size=60`"
                     alt="User Avatar"
                 />
 

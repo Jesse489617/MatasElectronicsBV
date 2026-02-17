@@ -37,7 +37,7 @@
                 </div>
 
                 <div class="h-12 w-12 shrink-0 overflow-hidden rounded-r-lg">
-                    <img v-if="assembly.image" :src="`/storage/${assembly.image}`" alt="Assembly Image" class="h-full w-full object-cover" />
+                    <img v-if="assembly.image" :src="assembly.image.icon" alt="Assembly Image" class="h-full w-full object-cover" />
                     <div v-else class="flex h-full w-full items-center justify-center bg-gray-100 text-xs text-gray-400">No Image</div>
                 </div>
             </Link>

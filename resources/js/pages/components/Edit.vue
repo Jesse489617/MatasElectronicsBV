@@ -32,7 +32,7 @@
 
             <div v-if="imagePreview || image" class="mb-4">
                 <p class="mb-2 font-semibold">Preview:</p>
-                <img :src="imagePreview || `/storage/${image}`" class="h-40 rounded border object-cover" alt="Component Image Preview" />
+                <img :src="imagePreview || image?.main" class="h-40 rounded border object-cover" alt="Component Image Preview" />
             </div>
 
             <div class="mb-4">
@@ -53,13 +53,14 @@ import Nav from '@/components/Nav.vue';
 import { getComponentById } from '@/lib/components/getComponentById';
 import { updateComponent } from '@/lib/components/updateComponents';
 import { getManufacturers } from '@/lib/manufacturers/getManufacturers';
+import type { ImageAsset } from '@/types/interfaces';
 
 const props = defineProps<{ id: string }>();
 
 const name = ref('');
 const manufacturerId = ref<number | null>(null);
 const type = ref('');
-const image = ref(''); // existing image path
+const image = ref<ImageAsset | null>(null);
 const price = ref<number>(0);
 
 const imageFile = ref<File | null>(null);
@@ -76,7 +77,7 @@ onMounted(async () => {
         name.value = component.name;
         manufacturerId.value = component.manufacturer_id;
         type.value = component.type;
-        image.value = component.image ?? '';
+        image.value = component.image;
         price.value = component.price;
     } catch (err) {
         console.error('Failed to load component or manufacturers', err);
