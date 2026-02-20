@@ -1,11 +1,8 @@
 <?php
 
-use App\Http\Controllers\AssemblyCartController;
 use App\Http\Controllers\AssemblyController;
-use App\Http\Controllers\BuyAssemblyController;
-use App\Http\Controllers\BuyComponentController;
+use App\Http\Controllers\BuyController;
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\ComponentCartController;
 use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\CustomAssemblyController;
 use App\Http\Controllers\DownloadInvoiceController;
@@ -40,22 +37,25 @@ Route::middleware('auth:sanctum', AdminMiddleware::class)->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/components/cart', [ComponentCartController::class, 'store']);
-    Route::post('components/buy', [BuyComponentController::class, 'store']);
+    Route::post('/components/cart', [CartController::class, 'store']);
+    Route::post('components/buy', [BuyController::class, 'store']);
 });
 
 Route::get('/components', [ComponentController::class, 'index']);
 Route::get('/components/{component}', [ComponentController::class, 'show']);
 
 // Assemblies API
+Route::prefix('assemblies')
+    ->group(base_path('routes/domain/assemblies/api.php'));
+
 Route::middleware('auth:sanctum', AdminMiddleware::class)->group(function () {
-    Route::post('assemblies/create', [AssemblyController::class, 'store']);
+    // Route::post('assemblies/create', [AssemblyController::class, 'store']);
     Route::put('assemblies/{assembly}', [AssemblyController::class, 'update']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('assemblies/cart', [AssemblyCartController::class, 'store']);
-    Route::post('assemblies/buy', [BuyAssemblyController::class, 'store']);
+    Route::post('assemblies/cart', [CartController::class, 'store']);
+    Route::post('assemblies/buy', [BuyController::class, 'store']);
     Route::post('assemblies/custom', [CustomAssemblyController::class, 'store']);
 });
 
@@ -75,5 +75,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/cart/items/{id}', [CartController::class, 'delete']);
     Route::post('/cart/checkout', [CartController::class, 'checkout']);
 });
-
-

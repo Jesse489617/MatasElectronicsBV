@@ -1,6 +1,4 @@
 <template>
-    <Nav />
-
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <h1 class="mb-6 text-2xl font-bold">Purchase History</h1>
 
@@ -54,7 +52,6 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { ref, computed, onMounted } from 'vue';
-import Nav from '@/components/Nav.vue';
 import { downloadInvoice as downloadInvoiceFile } from '@/lib/history/downloadInvoice';
 import { getHistory } from '@/lib/history/getHistory';
 import { isAuthenticated, fetchUser } from '@/stores/auth';

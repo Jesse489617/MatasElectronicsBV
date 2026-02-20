@@ -1,6 +1,4 @@
 <template>
-    <Nav />
-
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <h1 class="mb-8 text-2xl font-bold">Your Cart</h1>
 
@@ -43,7 +41,6 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import Nav from '@/components/Nav.vue';
 import { checkoutCart } from '@/lib/cart/checkoutCart';
 import { getCart } from '@/lib/cart/getCart';
 import { removeCartItem } from '@/lib/cart/removeCartItem';

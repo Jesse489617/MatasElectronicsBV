@@ -1,6 +1,4 @@
 <template>
-    <Nav />
-
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div v-if="component" class="bg-white">
             <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -64,7 +62,7 @@
                                         :disabled="isBuying"
                                         class="flex-1 rounded-md bg-black px-6 py-3 font-medium text-white transition hover:bg-gray-800 disabled:opacity-50"
                                     >
-                                        {{ isBuying ? 'Processing...' : 'Add to Cart' }}
+                                        {{ isBuying ? 'Processing...' : 'Buy Component' }}
                                     </button>
 
                                     <button
@@ -92,7 +90,6 @@
 import { ShoppingCartIcon } from '@heroicons/vue/24/solid';
 import { Link } from '@inertiajs/vue3';
 import { ref, onMounted, defineProps } from 'vue';
-import Nav from '@/components/Nav.vue';
 import { addComponentToCart } from '@/lib/components/addComponentToCart';
 import { buyComponent } from '@/lib/components/buyComponent';
 import { getComponentById } from '@/lib/components/getComponentById';

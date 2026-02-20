@@ -43,7 +43,7 @@
                 <!-- Dropdown Menu -->
                 <div
                     v-if="showMenu"
-                    id="user-dropdown"
+                    ref="user-dropdown"
                     class="absolute top-full right-0 z-20 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg"
                 >
                     <div class="py-1">
@@ -69,10 +69,12 @@ import { Link } from '@inertiajs/vue3';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { user, logout } from '@/stores/auth';
 
-const showMenu = ref(false);
+const showMenu = ref<boolean>(false);
 
-function toggleMenu() {
-    showMenu.value = !showMenu.value;
+//const userDropdownRef = useTemplateRef('user-dropdown')
+
+const toggleMenu = (): void => {
+    showMenu.value = !showMenu.value
 }
 
 function handleLogout() {
@@ -82,7 +84,7 @@ function handleLogout() {
 
 // Close dropdown when clicking outside
 function handleClickOutside(event: MouseEvent) {
-    const menu = document.getElementById('user-dropdown');
+    const menu = document.getElementById('user-dropdown'); // is stuk, vanwege reference
     const avatar = document.getElementById('user-avatar');
     if (menu && avatar && !menu.contains(event.target as Node) && !avatar.contains(event.target as Node)) {
         showMenu.value = false;

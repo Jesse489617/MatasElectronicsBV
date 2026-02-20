@@ -1,7 +1,4 @@
-export interface ImageAsset {
-    main: string;
-    icon: string;
-}
+import type { ImageAsset } from '@/types/resources/core/ImageAsset';
 
 export interface Assembly {
     id: number;
@@ -24,7 +21,7 @@ export interface AssemblyComponents {
     name: string;
     image: ImageAsset | null;
     price: number;
-    components: Component[];
+    components?: Component[];
 }
 
 export interface Manufacturer {

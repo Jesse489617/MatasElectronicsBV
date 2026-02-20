@@ -1,12 +1,10 @@
 <template>
-    <Nav />
-
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <h1 class="mb-6 text-2xl font-bold text-gray-900">Available Components</h1>
 
         <div v-if="isAuthenticated" class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center">
             <input
-                v-model="searchQuery"
+                v-model="search"
                 type="text"
                 placeholder="Search components..."
                 class="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-gray-500 focus:outline-none"
@@ -21,6 +19,11 @@
             </Link>
         </div>
 
+        <!--
+
+        <Components> -> <ComponentRow> -> <Link>
+
+        -->
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Link
                 v-for="component in filteredComponents"
@@ -33,12 +36,7 @@
                 </div>
 
                 <div class="h-12 w-12 shrink-0 overflow-hidden rounded-r-lg">
-                    <img
-                        v-if="component.image"
-                        :src="component.image.icon"
-                        alt="Component Icon"
-                        class="h-full w-full object-cover"
-                    />
+                    <img v-if="component.image" :src="component.image.icon" alt="Component Icon" class="h-full w-full object-cover" />
                     <div v-else class="flex h-full w-full items-center justify-center bg-gray-100 text-xs text-gray-400">No Icon</div>
                 </div>
             </Link>
@@ -50,30 +48,37 @@
 
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { ref, computed, onMounted } from 'vue';
-import Nav from '@/components/Nav.vue';
-import { getComponents } from '@/lib/components/getComponents';
+import { ref, computed } from 'vue';
+import axios from '@/plugins/axios';
+//import { getComponents } from '@/lib/components/getComponents';
 import { user, isAuthenticated } from '@/stores/auth';
 import type { Component } from '@/types/interfaces';
 
-const allComponents = ref<Component[]>([]);
-const searchQuery = ref('');
+const components = ref<Component[]>([]);
+const search = ref<string>('');
 
-const fetchComponents = async () => {
+const fetchComponents = async (): Promise<void> => {
     try {
-        allComponents.value = await getComponents();
+        const { data } = await axios.get('/api/components');
+
+        components.value = data.data;
     } catch (error) {
+        // if (error.response.status === 412) {
+        //     // Toastr message
+        // } else {
+        //     // Toastr: Er is iets fout gegaan tijdens het ophalen van de componenten.
+        // }
         console.error('Failed to fetch components:', error);
     }
 };
 
-onMounted(fetchComponents);
-
-const filteredComponents = computed(() => {
-    if (!isAuthenticated.value || !searchQuery.value) {
-        return allComponents.value;
+const filteredComponents = computed<Component[]>(() => {
+    if (!isAuthenticated.value || !search.value) {
+        return components.value;
     }
 
-    return allComponents.value.filter((component) => component.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+    return components.value.filter((component) => component.name.toLowerCase().includes(search.value.toLowerCase()));
 });
+
+fetchComponents();
 </script>

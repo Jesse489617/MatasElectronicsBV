@@ -1,6 +1,4 @@
 <template>
-    <Nav />
-
     <div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
         <h1 class="mb-6 text-2xl font-bold">Create New Component</h1>
 
@@ -48,7 +46,6 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { ref, onMounted } from 'vue';
-import Nav from '@/components/Nav.vue';
 import { createComponent } from '@/lib/components/createComponent';
 import { getManufacturers } from '@/lib/manufacturers/getManufacturers';
 

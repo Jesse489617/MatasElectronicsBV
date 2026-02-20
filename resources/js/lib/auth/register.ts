@@ -1,4 +1,4 @@
-import axios from '@/lib/axios';
+import axios from '@/plugins/axios';
 import type { RegisterPayload } from '@/types/payload';
 
 export const register = async (payload: RegisterPayload) => {

@@ -1,6 +1,4 @@
 <template>
-    <Nav />
-
     <div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
         <h1 class="mb-6 text-2xl font-bold">Edit Component</h1>
 
@@ -14,8 +12,8 @@
                 <label class="mb-1 block font-semibold">Manufacturer</label>
                 <select v-model="manufacturerId" class="w-full rounded border p-2" required>
                     <option value="" disabled>Select manufacturer</option>
-                    <option v-for="m in manufacturers" :key="m.id" :value="m.id">
-                        {{ m.name }}
+                    <option v-for="manufacturer in manufacturers" :key="manufacturer.id" :value="manufacturer.id">
+                        {{ manufacturer.name }}
                     </option>
                 </select>
             </div>
@@ -49,15 +47,14 @@
 import { router } from '@inertiajs/vue3';
 import { ref, onMounted } from 'vue';
 import { defineProps } from 'vue';
-import Nav from '@/components/Nav.vue';
 import { getComponentById } from '@/lib/components/getComponentById';
 import { updateComponent } from '@/lib/components/updateComponents';
 import { getManufacturers } from '@/lib/manufacturers/getManufacturers';
-import type { ImageAsset } from '@/types/interfaces';
+import type { ImageAsset } from '@/types/resources/core/ImageAsset';
 
 const props = defineProps<{ id: string }>();
 
-const name = ref('');
+const name = ref(''); // form.value['name'] =
 const manufacturerId = ref<number | null>(null);
 const type = ref('');
 const image = ref<ImageAsset | null>(null);
@@ -98,7 +95,7 @@ const handleUpdateComponent = async () => {
     if (!type.value) return alert('Component type is required');
 
     try {
-        await updateComponent({
+        await updateComponent({ // form.submit()
             id: Number(props.id),
             name: name.value,
             manufacturer_id: manufacturerId.value,

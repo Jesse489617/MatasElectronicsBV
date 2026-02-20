@@ -1,6 +1,4 @@
 <template>
-    <Nav />
-
     <div class="mx-auto max-w-3xl py-10">
         <h1 class="mb-6 text-2xl font-bold">Create Your Custom Assembly</h1>
 
@@ -32,7 +30,6 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { ref, onMounted, computed } from 'vue';
-import Nav from '@/components/Nav.vue';
 import { createCustomAssembly } from '@/lib/assemblies/createCustomAssembly';
 import { getComponents } from '@/lib/components/getComponents';
 

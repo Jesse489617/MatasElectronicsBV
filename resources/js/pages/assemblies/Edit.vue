@@ -1,5 +1,4 @@
 <template>
-    <Nav />
     <div class="mx-auto max-w-3xl py-10">
         <h1 class="mb-6 text-2xl font-bold">Edit Assembly</h1>
 
@@ -46,11 +45,11 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { ref, onMounted, computed, defineProps } from 'vue';
-import Nav from '@/components/Nav.vue';
 import { getAssemblyById } from '@/lib/assemblies/getAssemblyById';
 import { updateAssembly } from '@/lib/assemblies/updateAssembly';
 import { getComponents } from '@/lib/components/getComponents';
-import type { Component, AssemblyComponents, ImageAsset } from '@/types/interfaces';
+import type { Component, AssemblyComponents } from '@/types/interfaces';
+import type { ImageAsset } from '@/types/resources/core/ImageAsset';
 
 const props = defineProps<{ id: string }>();
 

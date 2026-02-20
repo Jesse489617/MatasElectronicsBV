@@ -1,7 +1,5 @@
 <template>
     <div class="min-h-screen bg-gray-50">
-        <Nav />
-
         <main class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
             <h2 class="mb-6 text-2xl font-bold">Explore our products</h2>
 
@@ -23,6 +21,5 @@
 </template>
 
 <script setup lang="ts">
-    import { Link } from '@inertiajs/vue3';
-    import Nav from '@/components/Nav.vue';
+    import { Link } from '@inertiajs/vue3'
 </script>

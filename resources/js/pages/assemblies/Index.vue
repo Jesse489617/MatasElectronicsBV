@@ -1,6 +1,4 @@
 <template>
-    <Nav />
-
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <h1 class="mb-6 text-2xl font-bold text-gray-900">Available Assemblies</h1>
 
@@ -50,7 +48,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { ref, computed, onMounted } from 'vue';
-import Nav from '@/components/Nav.vue';
 import { getAssemblies } from '@/lib/assemblies/getAssemblies';
 import { user, isAuthenticated } from '@/stores/auth';
 import type { Assembly } from '@/types/interfaces';

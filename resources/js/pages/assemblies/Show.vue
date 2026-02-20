@@ -1,6 +1,4 @@
 <template>
-    <Nav />
-
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div v-if="assembly" class="bg-white">
             <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -51,7 +49,7 @@
                                         :disabled="isBuying"
                                         class="flex-1 rounded-md bg-black px-6 py-3 font-medium text-white transition hover:bg-gray-800 disabled:opacity-50"
                                     >
-                                        {{ isBuying ? 'Processing...' : 'Add to Cart' }}
+                                        {{ isBuying ? 'Processing...' : 'Buy Assembly' }}
                                     </button>
 
                                     <button
@@ -84,12 +82,7 @@
                             </div>
 
                             <div class="h-12 w-12 shrink-0 overflow-hidden rounded-r-lg">
-                                <img
-                                    v-if="comp.image"
-                                    :src="comp.image.icon"
-                                    alt="Component Icon"
-                                    class="h-full w-full object-cover"
-                                />
+                                <img v-if="comp.image" :src="comp.image.icon" alt="Component Icon" class="h-full w-full object-cover" />
                                 <div v-else class="flex h-full w-full items-center justify-center bg-gray-100 text-xs text-gray-400">No Icon</div>
                             </div>
                         </Link>
@@ -106,7 +99,6 @@
 import { ShoppingCartIcon } from '@heroicons/vue/24/solid';
 import { Link } from '@inertiajs/vue3';
 import { ref, onMounted, defineProps } from 'vue';
-import Nav from '@/components/Nav.vue';
 import { addAssemblyToCart } from '@/lib/assemblies/addAssemblyToCart';
 import { buyAssembly } from '@/lib/assemblies/buyAssembly';
 import { getAssemblyById } from '@/lib/assemblies/getAssemblyById';
@@ -115,7 +107,7 @@ import type { AssemblyComponents } from '@/types/interfaces';
 
 const props = defineProps<{ id: string }>();
 
-const assembly = ref<AssemblyComponents | null>(null);
+const assembly = ref<AssemblyComponents>();
 const quantity = ref(1);
 const isBuying = ref(false);
 const isAdding = ref(false);

@@ -4,9 +4,11 @@ use App\Http\Middleware\AdminWebMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Home');
-})->name('home');
+Route::inertia('/', 'Home')->name('home');
+
+//Route::get('/', function () {
+//    return Inertia::render('Home');
+//})->name('home');
 
 // Auth pages
 Route::get('/login', function () {

@@ -7,3 +7,12 @@ export type AppPageProps<T extends Record<string, unknown> = Record<string, unkn
     auth: Auth;
     [key: string]: unknown;
 };
+
+export interface Notification {
+    id: string
+    title: string
+    message: string
+    type: 'info' | 'warning' | 'success' | 'error'
+    duration?: number
+}
+
