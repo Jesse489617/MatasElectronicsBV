@@ -1,7 +1,7 @@
 <template>
     <div class="h-full">
         <NavBar />
-        <Notification />
+        <Notifications />
 
         <slot />
     </div>
@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
     import NavBar from '@/components/layout/NavBar.vue';
-    import Notification from '@/components/layout/Notification.vue';
+    import Notifications from '@/components/layout/Notifications.vue';
 
     defineOptions({
         name: 'DefaultLayout',

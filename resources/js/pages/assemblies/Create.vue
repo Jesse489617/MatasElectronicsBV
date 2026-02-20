@@ -1,5 +1,5 @@
 <template>
-    <div class="mx-auto max-w-3xl py-10">
+    <div class="py-6">
         <h1 class="mb-6 text-2xl font-bold">Create New Assembly</h1>
 
         <form @submit.prevent="submit" method="post" enctype="multipart/form-data">
