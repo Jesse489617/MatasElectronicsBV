@@ -12,9 +12,9 @@ class StoreAssemblyRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:50'],
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'price' => 'required|numeric|min:0',
-            'components' => 'required|array|min:1',
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'components' => ['required', 'array', 'min:1'],
             'components.*' => [
                 Rule::exists(Component::class, 'id'),
             ],

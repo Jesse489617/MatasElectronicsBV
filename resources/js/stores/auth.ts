@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import axios from '@/lib/axios';
+import axios from '@/plugins/axios';
 
 export const user = ref<any>(null);
 export const isAuthenticated = ref(false);
@@ -40,6 +40,7 @@ export const logout = async () => {
       },
     });
   } catch (error) {
+      console.log(error);
   } finally {
     localStorage.removeItem('token');
     user.value = null;

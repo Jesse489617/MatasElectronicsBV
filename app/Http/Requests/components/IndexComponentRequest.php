@@ -14,7 +14,7 @@ class IndexComponentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'search' => 'nullable|string|max:255',
+            'search' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

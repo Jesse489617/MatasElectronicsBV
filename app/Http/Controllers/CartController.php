@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\cart\StoreCartRequest;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\CustomAssembly;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class CartController
@@ -19,6 +21,28 @@ class CartController
 
         return response()->json([
             'items' => $cart?->items ?? [],
+        ]);
+    }
+
+    public function store(StoreCartRequest $request): JsonResponse
+    {
+        $cart = Cart::firstOrCreate([
+            'user_id' => $request->user()->id,
+        ]);
+
+        $cart->items()->create([
+            'assembly_id' => $request->assembly_id ?? null,
+            'component_id' => $request->component_id ?? null,
+            'quantity' => 1,
+        ]);
+
+        $message = $request->assembly_id
+            ? "Successfully purchased $request->quantity assembly(s)."
+            : "Successfully purchased $request->quantity component(s).";
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
         ]);
     }
 
