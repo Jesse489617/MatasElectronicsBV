@@ -1,4 +1,4 @@
-import axios from '@/lib/axios';
+import axios from '@/plugins/axios';
 import type { UpdateComponentPayload } from '@/types/payload';
 export const updateComponent = async (payload: UpdateComponentPayload) => {
     const formData = new FormData();

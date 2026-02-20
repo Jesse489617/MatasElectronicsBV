@@ -1,4 +1,4 @@
-import axios from '@/lib/axios';
+import axios from '@/plugins/axios';
 
 export const getComponents = async () => {
     const response = await axios.get('/api/components');

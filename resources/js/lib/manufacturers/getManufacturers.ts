@@ -1,4 +1,4 @@
-import axios from '@/lib/axios';
+import axios from '@/plugins/axios';
 import type { Manufacturer } from '@/types/interfaces';
 
 export const getManufacturers = async (): Promise<Manufacturer[]> => {

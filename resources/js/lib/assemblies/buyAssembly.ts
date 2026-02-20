@@ -1,4 +1,4 @@
-import axios from '@/lib/axios';
+import axios from '@/plugins/axios';
 import type { BuyAssemblyPayload } from '@/types/payload';
 
 export const buyAssembly = async (payload: BuyAssemblyPayload) => {

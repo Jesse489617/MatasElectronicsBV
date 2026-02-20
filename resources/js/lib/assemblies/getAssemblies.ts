@@ -1,4 +1,4 @@
-import axios from '@/lib/axios';
+import axios from '@/plugins/axios';
 import type { Assembly } from '@/types/interfaces';
 
 export const getAssemblies = async (): Promise<Assembly[]> => {

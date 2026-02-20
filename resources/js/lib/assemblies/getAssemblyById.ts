@@ -1,4 +1,4 @@
-import axios from '@/lib/axios';
+import axios from '@/plugins/axios';
 import type { AssemblyComponents } from '@/types/interfaces';
 
 export const getAssemblyById = async (id: string | number): Promise<AssemblyComponents> => {

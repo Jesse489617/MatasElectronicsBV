@@ -1,4 +1,4 @@
-import axios from '@/lib/axios';
+import axios from '@/plugins/axios';
 import type { CreateCustomAssemblyPayload } from '@/types/payload';
 
 export const createCustomAssembly = async (payload: CreateCustomAssemblyPayload) => {

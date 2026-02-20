@@ -1,4 +1,4 @@
-import axios from '@/lib/axios';
+import axios from '@/plugins/axios';
 import type { LoginPayload } from '@/types/payload';
 import type { LoginResponse } from '@/types/response';
 

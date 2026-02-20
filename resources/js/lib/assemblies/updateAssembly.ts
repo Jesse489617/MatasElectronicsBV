@@ -1,4 +1,4 @@
-import axios from '@/lib/axios';
+import axios from '@/plugins/axios';
 
 export const updateAssembly = async (id: string, formData: FormData) => {
     const response = await axios.post(`/api/assemblies/${id}?_method=PUT`, formData, {
