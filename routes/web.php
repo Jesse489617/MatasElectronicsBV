@@ -6,9 +6,9 @@ use Inertia\Inertia;
 
 Route::inertia('/', 'Home')->name('home');
 
-//Route::get('/', function () {
+// Route::get('/', function () {
 //    return Inertia::render('Home');
-//})->name('home');
+// })->name('home');
 
 // Auth pages
 Route::get('/login', function () {
@@ -39,9 +39,8 @@ Route::get('/components/{id}', function ($id) {
 })->name('components.show');
 
 // Assemblies pages
-Route::get('/assemblies', function () {
-    return Inertia::render('assemblies/Index');
-})->name('assemblies.index');
+Route::prefix('assemblies')
+    ->group(base_path('routes/domain/assemblies/web.php'));
 
 Route::get('/assemblies/custom', function () {
     return Inertia::render('assemblies/Custom');
@@ -70,6 +69,3 @@ Route::get('/history', function () {
 Route::get('/cart', function () {
     return Inertia::render('Cart');
 })->name('cart');
-
-
-
